@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Панель адміністратора</title>
+  <style>
+    #category, #subcategory {
+      color: black;
+      background-color: white;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 150px;
+      height: 100%;
+      background-color: #333;
+      padding-top: 20px;
+    }
+
+    .sidebar button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    #login-section, #admin-panel, .form {
+      margin-left: 170px;
+      margin-top: 20px;
+    }
+
+    .admin-panel .btn {
+      margin: 10px;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .admin-panel .btn:hover {
+      background-color: #45a049;
+    }
+
+    .form {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <button class="sidebar-btn" data-target="main.html">Головна</button>
+    <button class="sidebar-btn" data-target="aboutUs.html">Про нас</button>
+    <button class="sidebar-btn" data-target="admin.html">Увійти як адміністратор</button>
+  </div>
+
+  <!-- Вхід адміністратора -->
+  <section id="login-section">
+    <h2>Вхід адміністратора</h2>
+    <form id="adminLoginForm">
+      <label for="password">Пароль:</label>
+      <input type="password" id="password" name="password">
+      <button type="submit">Увійти</button>
+    </form>
+    <p id="loginMessage"></p>
+  </section>
+
+  <!-- Панель адміністратора -->
+  <section id="admin-panel" class="admin-panel" style="display: none;">
+    <h2>Панель адміністратора</h2>
+    <button class="btn" onclick="showAddItemForm()">Додати товар</button>
+    <button class="btn" onclick="showEditItemForm()">Редагувати товар</button>
+    <button class="btn" onclick="showDeleteItemForm()">Видалити товар</button>
+  </section>
+
+  <!-- Форма додавання товару -->
+<div id="addItemForm" class="form">
+  <h3>Додати товар</h3>
+  <form id="addItem">
+    <label for="itemName">Назва:</label>
+    <input type="text" id="itemName" required>
+
+    <label for="category">Категорія:</label>
+    <select id="category" required>
+      <option value="">Оберіть категорію</option>
+    </select>
+
+    <label for="subcategory">Підкатегорія:</label>
+    <select id="subcategory">
+      <option value="">Оберіть підкатегорію</option>
+    </select>
+
+    <label for="description">Опис:</label>
+    <textarea id="description" required></textarea>
+
+    <label for="price">Ціна (грн):</label>
+    <input type="number" id="price" required min="0" step="0.01">
+
+    <label for="stock">Кількість на складі:</label>
+    <input type="number" id="stock" required min="0">
+
+    <button type="submit">Додати</button>
+  </form>
+</div>
+
+  <!-- Форма редагування товару -->
+  <div id="editItemForm" class="form">
+    <h3>Редагувати товар</h3>
+    <form id="editItem">
+      <input type="hidden" id="editItemId">
+
+      <label for="editItemName">Назва:</label>
+      <input type="text" id="editItemName" required>
+
+      <label for="editCategory">Категорія:</label>
+      <select id="editCategory" required></select>
+
+      <label for="editSubcategory">Підкатегорія:</label>
+      <select id="editSubcategory"></select>
+
+      <label for="editDescription">Опис:</label>
+      <textarea id="editDescription" required></textarea>
+
+      <button type="submit">Зберегти</button>
+    </form>
+  </div>
+
+  <!-- Форма видалення товару -->
+  <div id="deleteItemForm" class="form">
+    <h3>Видалити товар</h3>
+    <form id="deleteItem">
+      <label for="itemId">ID товару:</label>
+      <input type="text" id="itemId" required>
+      <button type="submit">Видалити</button>
+    </form>
+  </div>
+
+  <script>
+    // Навігація
+    document.querySelectorAll('.sidebar-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        location.href = button.dataset.target;
+      });
+    });
+
+    // Авторизація
+    document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const password = document.getElementById('password').value;
+      const loginMessage = document.getElementById('loginMessage');
+
+      try {
+        const response = await fetch('http://localhost:3000/api/admin_password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          document.getElementById('admin-panel').style.display = 'block';
+          document.getElementById('adminLoginForm').style.display = 'none';
+          loginMessage.textContent = '';
+        } else {
+          loginMessage.textContent = result.message || 'Невірний пароль';
+        }
+      } catch (error) {
+        console.error('Помилка запиту:', error);
+        loginMessage.textContent = 'Помилка сервера або мережі';
+      }
+    });
+
+    // Показати форми
+    function showAddItemForm() {
+      document.getElementById('addItemForm').style.display = 'block';
+      document.getElementById('editItemForm').style.display = 'none';
+      document.getElementById('deleteItemForm').style.display = 'none';
+    }
+
+    function showEditItemForm() {
+      const productId = prompt('Введіть ID товару:');
+      if (!productId) return;
+
+      fetch(`http://localhost:3000/api/products/${productId}`)
+        .then(res => res.json())
+        .then(product => {
+          document.getElementById('editItemId').value = product.id;
+          document.getElementById('editItemName').value = product.name;
+          document.getElementById('editCategory').value = product.category_id;
+          document.getElementById('editSubcategory').value = product.subcategory_id || '';
+          document.getElementById('editDescription').value = product.description;
+
+          document.getElementById('editItemForm').style.display = 'block';
+          document.getElementById('addItemForm').style.display = 'none';
+          document.getElementById('deleteItemForm').style.display = 'none';
+        })
+        .catch(err => alert('Помилка завантаження товару'));
+    }
+
+    function showDeleteItemForm() {
+      document.getElementById('deleteItemForm').style.display = 'block';
+      document.getElementById('addItemForm').style.display = 'none';
+      document.getElementById('editItemForm').style.display = 'none';
+    }
+
+    // Завантаження категорій
+function loadCategories(selectId) {
+  fetch('http://localhost:3000/api/categories')
+    .then(res => res.json())
+    .then(data => {
+      const select = document.getElementById(selectId);
+      select.innerHTML = '<option value="">Оберіть категорію</option>';
+      data.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.category_id;  // Ось тут змінив
+        option.textContent = cat.name;
+        select.appendChild(option);
+      });
+    });
+}
+
+// Завантаження підкатегорій при виборі категорії
+function loadSubcategories(categorySelectId, subcategorySelectId) {
+  const catSelect = document.getElementById(categorySelectId);
+  const subSelect = document.getElementById(subcategorySelectId);
+
+  catSelect.addEventListener('change', () => {
+    const categoryId = catSelect.value;
+    subSelect.innerHTML = '<option value="">Оберіть підкатегорію</option>';
+
+    if (categoryId) {
+      console.log('Вибрана категорія ID:', categoryId);
+      fetch(`http://localhost:3000/api/subcategories/${categoryId}`)
+        .then(res => res.json())
+        .then(data => {
+          console.log('Отримано підкатегорії:', data);
+
+          if (data.error) {
+            console.warn('Сервер повернув помилку:', data.error);
+            // Можна показати повідомлення користувачу або залишити пустий select
+            return;
+          }
+
+          if (!Array.isArray(data)) {
+            console.error('Помилка: очікувався масив, але прийшло:', data);
+            return;
+          }
+
+          data.forEach(sub => {
+            const option = document.createElement('option');
+            option.value = sub.id;
+            option.textContent = sub.subcategory_name;
+            subSelect.appendChild(option);
+          });
+        })
+        .catch(error => {
+          console.error('Помилка при отриманні підкатегорій:', error);
+        });
+    }
+  });
+}
+
+// Після завантаження сторінки
+document.addEventListener('DOMContentLoaded', () => {
+  loadCategories('category');
+  loadCategories('editCategory');
+  loadSubcategories('category', 'subcategory');
+  loadSubcategories('editCategory', 'editSubcategory');
+});
+
+    // Додавання товару
+    document.getElementById('addItem').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const data = {
+    name: document.getElementById('itemName').value,
+    category_id: document.getElementById('category').value,
+    subcategory_id: document.getElementById('subcategory').value || null,
+    description: document.getElementById('description').value,
+    price: parseFloat(document.getElementById('price').value.replace(',', '.')),
+    stock: parseInt(document.getElementById('stock').value),
+  };
+  console.log('Ціна:', document.getElementById('price').value);
+
+  fetch('http://localhost:3000/api/products', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+    .then(res => res.json())
+    .then(result => {
+      alert(result.message || 'Товар додано');
+      document.getElementById('addItem').reset();
+    })
+    .catch(error => {
+      console.error('Помилка при додаванні товару:', error);
+      alert('Сталася помилка при додаванні товару');
+    });
+});
+
+    // Редагування товару
+    document.getElementById('editItem').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const itemId = document.getElementById('editItemId').value;
+
+      const data = {
+        name: document.getElementById('editItemName').value,
+        category_id: document.getElementById('editCategory').value,
+        subcategory_id: document.getElementById('editSubcategory').value || null,
+        description: document.getElementById('editDescription').value
+      };
+
+      fetch(`http://localhost:3000/api/products/${itemId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+        .then(res => res.json())
+        .then(result => {
+          alert(result.message || 'Товар оновлено');
+          document.getElementById('editItem').reset();
+        });
+    });
+
+    // Видалення товару
+    document.getElementById('deleteItem').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const id = document.getElementById('itemId').value;
+
+      fetch(`http://localhost:3000/api/products/${id}`, {
+        method: 'DELETE'
+      })
+        .then(res => res.json())
+        .then(result => {
+          alert(result.message || 'Товар видалено');
+          document.getElementById('deleteItem').reset();
+        });
+    });
+  </script>
+</body>
+</html>

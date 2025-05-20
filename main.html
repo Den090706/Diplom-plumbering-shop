@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Категорії зброї</title>
+  <style>
+
+    #category-container, #subcategory-container, #product-container{
+      margin-left: 210px; /* Відступ для основного контенту після панелі */
+      padding: 20px;
+    }
+    .category-container {
+            margin-left: 210px; /* Відступ для основного контенту після панелі */
+            padding: 20px;
+        }
+
+    .sidebar {
+            position: fixed; /* Фіксує панель у певному місці */
+            top: 0;
+            left: 0; /* Панель знаходиться з лівого боку */
+            width: 150px; /* Ширина панелі */
+            height: 100%; /* Панель займає всю висоту екрана */
+            background-color: #333; /* Темний фон для панелі */
+            padding-top: 20px; /* Відступ зверху */
+        }
+
+        /* Стилі для кнопок в меню */
+        .sidebar button {
+            display: block; /* Кнопки йдуть по черзі одна під одною */
+            width: 100%; /* Кнопки займають всю ширину панелі */
+            padding: 10px; /* Відступи всередині кнопок */
+            margin-bottom: 10px; /* Відступ між кнопками */
+            background-color: #4CAF50; /* Колір кнопок */
+            color: white; /* Колір тексту */
+            border: none; /* Без обведення */
+            text-align: left; /* Текст вирівняно по лівому краю */
+            cursor: pointer; /* Зміна курсора на вказівник при наведенні */
+        }
+
+    /* Стилізація кнопок категорій */
+    .category-button {
+      padding: 10px 20px;
+      margin: 10px;
+      background-color: #d56e05;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .category-button:hover {
+      background-color: #0056b3;
+    }
+
+    #video-container {
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            margin-top: 200px;
+            margin-left: 200px;
+        }
+    .product-card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 1rem;
+            width: 250px;
+            background-color: #f9f9f9;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+    }
+    .product-card:hover {
+            transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <button class="sidebar-btn" data-target="main.html">Головна</button>
+    <button class="sidebar-btn" data-target="aboutUs.html">Про нас</button>
+    <button class="sidebar-btn" data-target="admin.html">Увійти як адміністратор</button>
+</div>
+
+<!-- Контейнер для товарів -->
+<div id="product-container" style="display: flex; flex-wrap: wrap; gap: 1rem;"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', loadProducts);
+
+  async function loadProducts() {
+    try {
+      const response = await fetch('http://localhost:3000/api/products');
+      const products = await response.json();
+
+      const container = document.getElementById('product-container');
+      container.innerHTML = '';
+
+      if (!Array.isArray(products) || products.length === 0) {
+        container.innerHTML = '<p>Товари не знайдені.</p>';
+        return;
+      }
+
+      products.forEach(product => {
+  const card = document.createElement('div');
+  card.className = 'product-card';
+
+  card.innerHTML = `
+    <h3>${product.name}</h3>
+    <p>${product.description}</p>
+    <p><strong>Ціна:</strong> ${product.price} грн</p>
+    <p><strong>Кількість:</strong> ${product.stock}</p>
+    <p><strong>Категорія:</strong> ${product.category_name}: ${product.subcategory_name || '—'}</p>
+  `;
+
+  container.appendChild(card);
+});
+
+    } catch (error) {
+      console.error('Помилка завантаження товарів:', error);
+      const container = document.getElementById('product-container');
+      container.innerHTML = `<p>Сталася помилка: ${error.message}</p>`;
+    }
+  }
+
+  //переммикання між сторінками
+  document.querySelectorAll('.sidebar-btn').forEach(button => {
+  button.addEventListener('click', function() {
+    const targetPage = button.getAttribute('data-target');
+    window.location.href = targetPage;
+  });
+});
+</script>
+</body>
+</html>
