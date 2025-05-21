@@ -34,10 +34,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // === MySQL Connection ===
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '5555',
-  database: 'plumber_shop',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT, // якщо порт нестандартний (не 3306)
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   charset: 'utf8mb4'
 });
 
