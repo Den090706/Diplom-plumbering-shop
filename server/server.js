@@ -33,7 +33,7 @@ app.post('/api/admin_password', (req, res) => {
 app.use(express.urlencoded({ extended: true }));
 
 // === MySQL Connection ===
-const connection = mysql.createConnection({
+const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
