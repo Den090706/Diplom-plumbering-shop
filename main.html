@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <title>Категорії зброї</title>
+  <title>Магазин сантехніки</title>
   <style>
 
     #category-container, #subcategory-container, #product-container{
@@ -89,7 +89,7 @@
 
   async function loadProducts() {
     try {
-      const response = await fetch('http://localhost:3000/api/products');
+      const response = await fetch('https://diplom-plumbering-shop.onrender.com/api/products');
       const products = await response.json();
 
       const container = document.getElementById('product-container');

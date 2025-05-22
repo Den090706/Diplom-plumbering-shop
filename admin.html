@@ -158,7 +158,7 @@
       const loginMessage = document.getElementById('loginMessage');
 
       try {
-        const response = await fetch('http://localhost:3000/api/admin_password', {
+        const response = await fetch('https://diplom-plumbering-shop.onrender.com/api/admin_password', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password })
@@ -190,7 +190,7 @@
       const productId = prompt('Введіть ID товару:');
       if (!productId) return;
 
-      fetch(`http://localhost:3000/api/products/${productId}`)
+      fetch(`https://diplom-plumbering-shop.onrender.com/api/products/${productId}`)
         .then(res => res.json())
         .then(product => {
           document.getElementById('editItemId').value = product.id;
@@ -214,7 +214,7 @@
 
     // Завантаження категорій
 function loadCategories(selectId) {
-  fetch('http://localhost:3000/api/categories')
+  fetch('https://diplom-plumbering-shop.onrender.com/api/categories')
     .then(res => res.json())
     .then(data => {
       const select = document.getElementById(selectId);
@@ -239,7 +239,7 @@ function loadSubcategories(categorySelectId, subcategorySelectId) {
 
     if (categoryId) {
       console.log('Вибрана категорія ID:', categoryId);
-      fetch(`http://localhost:3000/api/subcategories/${categoryId}`)
+      fetch(`https://diplom-plumbering-shop.onrender.com/api/subcategories/${categoryId}`)
         .then(res => res.json())
         .then(data => {
           console.log('Отримано підкатегорії:', data);
@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   console.log('Ціна:', document.getElementById('price').value);
 
-  fetch('http://localhost:3000/api/products', {
+  fetch('https://diplom-plumbering-shop.onrender.com/api/products', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: document.getElementById('editDescription').value
       };
 
-      fetch(`http://localhost:3000/api/products/${itemId}`, {
+      fetch(`https://diplom-plumbering-shop.onrender.com/api/products/${itemId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const id = document.getElementById('itemId').value;
 
-      fetch(`http://localhost:3000/api/products/${id}`, {
+      fetch(`https://diplom-plumbering-shop.onrender.com/api/products/${id}`, {
         method: 'DELETE'
       })
         .then(res => res.json())
