@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Про сайт</title>
+  <style>
+    .aboutUs {
+            margin-left: 170px; /* Відступ для основного контенту після панелі */
+            padding: 20px;
+        }
+
+    .sidebar {
+            position: fixed; /* Фіксує панель у певному місці */
+            top: 0;
+            left: 0; /* Панель знаходиться з лівого боку */
+            width: 150px; /* Ширина панелі */
+            height: 100%; /* Панель займає всю висоту екрана */
+            background-color: #333; /* Темний фон для панелі */
+            padding-top: 20px; /* Відступ зверху */
+        }
+
+        /* Стилі для кнопок в меню */
+        .sidebar button {
+            display: block; /* Кнопки йдуть по черзі одна під одною */
+            width: 100%; /* Кнопки займають всю ширину панелі */
+            padding: 10px; /* Відступи всередині кнопок */
+            margin-bottom: 10px; /* Відступ між кнопками */
+            background-color: #4CAF50; /* Колір кнопок */
+            color: white; /* Колір тексту */
+            border: none; /* Без обведення */
+            text-align: left; /* Текст вирівняно по лівому краю */
+            cursor: pointer; /* Зміна курсора на вказівник при наведенні */
+        }
+
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <button class="sidebar-btn" data-target="main.html">Головна</button>
+    <button class="sidebar-btn" data-target="aboutUs.html">Про нас</button>
+    <button class="sidebar-btn" data-target="admin.html">Увійти як адміністратор</button>
+</div>
+
+<div id="aboutUs" class="aboutUs">
+  <h1>Трохи інформації про цей сайт</h1>
+  <p>Цей сайт створений як курсовий проєкт з дисціпліни по створенню АІС, та не є справжнім магазином.
+  </p>
+</div>
+<script>
+const sidebarButtons = document.querySelectorAll(".sidebar-btn");
+    
+    sidebarButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        const targetPage = button.getAttribute("data-target");
+        window.location.href = targetPage;
+      });
+    });
+</script>
+</body>
+</html>
