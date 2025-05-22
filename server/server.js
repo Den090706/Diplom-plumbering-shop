@@ -8,7 +8,6 @@ require('dotenv').config();
 
 const app = express();
 app.use(express.json()); // для JSON-запитів
-app.use(cors());
 
 app.use(cors({
   origin: 'http://127.0.0.1:5500',
@@ -50,6 +49,16 @@ db.connect(err => {
 });
 
 const queryAsync = util.promisify(db.query).bind(db);
+
+const path = require('path');
+
+// Роздаємо статичні файли з теки 'diplom' (один рівень вгору від server.js)
+app.use(express.static(path.join(__dirname, '..')));
+
+// Маршрут для кореневого шляху, який віддає твій головний HTML (припустимо main.html)
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'main.html'));
+});
 
 // Отримання категорій
 app.get('/api/categories', async (req, res) => {
@@ -140,7 +149,7 @@ app.put('/api/products/:id', (req, res) => {
     return res.status(400).json({ error: 'Усі поля повинні бути заповнені' });
   }
 
-  const checkProductQuery = 'SELECT * FROM products WHERE id = ?';
+  const checkProductQuery = 'SELECT * FROM products WHERE product_id = ?';
   db.query(checkProductQuery, [productId], (err, results) => {
     if (err) {
       console.error('Помилка перевірки товару:', err);
@@ -165,7 +174,7 @@ app.put('/api/products/:id', (req, res) => {
 // Видалення товару
 app.delete('/api/products/:id', (req, res) => {
   const productId = req.params.id;
-  db.query('DELETE FROM products WHERE id = ?', [productId], (err, result) => {
+  db.query('DELETE FROM products WHERE product_id = ?', [productId], (err, result) => {
     if (err) {
       console.error('Помилка видалення товару:', err);
       res.status(500).json({ error: 'Помилка сервера' });
