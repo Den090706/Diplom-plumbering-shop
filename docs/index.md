@@ -26,7 +26,7 @@ title: Магазин сантехніки "Plumber Shop"
 
 ## Опублікований продукт
 
-Веб-застосунок можна переглянути за посиланням: [(https://diplom-plumbering-shop.onrender.com)]
+Веб-застосунок можна переглянути за посиланням: [https://diplom-plumbering-shop.onrender.com]
 
 ---
 
