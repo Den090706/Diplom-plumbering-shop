@@ -23,3 +23,5 @@ build/
 # Тимчасові файли
 *.tmp
 *.swp
+
+server/config/envForHosting
