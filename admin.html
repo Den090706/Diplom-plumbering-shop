@@ -311,17 +311,17 @@
   </form>
 </div>
 
-  <script>
-    // Навігація
-    document.querySelectorAll('.sidebar-btn').forEach(button => {
-      button.addEventListener('click', () => {
-        location.href = button.dataset.target;
-      });
-    });
+<script>
+// Навігація
+document.querySelectorAll('.sidebar-btn').forEach(button => {
+  button.addEventListener('click', () => {
+    location.href = button.dataset.target;
+  });
+});
 
-    // URL для запитів
-    const API_BASE = 'http://localhost:3000';
-
+// URL для запитів
+// locoal const API_BASE = 'http://localhost:3000';
+const API_BASE = 'https://diplom-plumbering-shop.onrender.com';
     
   // Авторизація
 document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {
