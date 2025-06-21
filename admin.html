@@ -7,6 +7,7 @@
   body {
     margin: 0;
     font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
   }
 
   .sidebar {
@@ -15,8 +16,9 @@
     left: 0;
     width: 150px;
     height: 100%;
-    background-color: #333;
+    background-color: #e6f4f8;
     padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   }
 
   .sidebar button {
@@ -24,11 +26,16 @@
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
-    background-color: #4CAF50;
-    color: white;
+    background-color: #37ddf3;
+    color: black;
     border: none;
     text-align: left;
     cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .sidebar button:hover {
+    background-color: #2ac1d5;
   }
 
   .admin-container {
@@ -39,19 +46,22 @@
   #login-section, #admin-panel, .form,
   #categoryForm, #subcategoryForm {
     margin-top: 20px;
+    padding: 20px;
   }
 
   .admin-panel .btn {
     margin: 10px;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
+    padding: 10px 20px;
+    background-color: #37ddf3;
+    color: black;
     border: none;
     cursor: pointer;
+    transition: background-color 0.3s;
   }
 
   .admin-panel .btn:hover {
-    background-color: #45a049;
+    background-color: #37ddf3;
+    color: black;
   }
 
   .form {
@@ -79,7 +89,7 @@
 
   #category, #subcategory {
     color: black;
-    background-color: white;
+    background-color: #e6f4f8;
   }
 </style>
 
@@ -110,6 +120,9 @@
       <button class="btn" onclick="showAddOptions()">Додати</button>
       <button class="btn" onclick="showEditOptions()">Редагувати</button>
       <button class="btn" onclick="showDeleteOptions()">Видалити</button>
+      
+      <button onclick="cleanupImages()">Очистити зайві зображення</button>
+      <div id="cleanup-result"></div>
     </section>
 
 <!-- ДОДАВАННЯ -->
@@ -247,27 +260,56 @@
 <div id="editCategoryForm" class="form" style="display: none;">
   <h3>Редагувати категорію</h3>
   <form id="editCategoryFormElement">
-    <input type="hidden" id="editCategoryId">
+    <input type="hidden" id="editCategoryCategoryId">
 
     <label>Категорія (поточна): <span id="currentCategoryNameCat"></span></label>
-    <select id="editCategoryCat" required></select>
     
-    <label>Нова назва категорії</label>
+    <label>Нова назва категорії: </label>
     <input type="text" id="editCategoryName" placeholder="Нова назва" required>
 
     <button type="submit">Оновити категорію</button>
   </form>
 </div>
 
-  <!-- Форма видалення товару -->
-  <div id="deleteItemForm" class="form">
-    <h3>Видалити товар</h3>
-    <form id="deleteItem">
-      <label for="itemId">ID товару:</label>
-      <input type="text" id="itemId" required>
-      <button type="submit">Видалити</button>
-    </form>
-  </div>
+<!-- ВИДАЛЕННЯ -->
+<!-- Вибір для видалення -->
+<div class="edit-options" id="editOptions" style="display: none;">
+  <button onclick="showForm('selectItemToDelete')">Товар</button>
+  <button onclick="showForm('selectSubcategoryToDelete')">Підкатегорію</button>
+  <button onclick="showForm('selectCategoryToDelete')">Категорію</button>
+</div>
+
+<!-- Вибір товару -->
+<div id="selectItemToDelete" class="form" style="display: none;">
+  <h3>Оберіть товар для видалення</h3>
+  <select id="editItemSelect" required></select>
+  <button id="loadItemToDeleteBtn" type="button">Вибрати</button>
+</div>
+
+<!-- Форма видалення товару -->
+<div id="deleteItemForm" class="form" style="display: none;">
+  <h3>Видалення товару</h3>
+  <form id="deleteItemFormElement" method="post">
+    <input type="hidden" id="deleteItemIdItem">
+
+    <label>Назва товару (поточна): <span id="currentItemName"></span></label>
+
+    <label>Ціна (поточна): <span id="currentPrice"></span></label>
+
+    <label>Поточне зображення:</label><br>
+    <img id="currentImage" src="/uploads/products/no-image.jpg" alt="Поточне зображення" width="150">
+
+    <label>Категорія (поточна): <span id="currentCategoryName"></span></label>
+
+    <label>Підкатегорія (поточна): <span id="currentSubcategoryName"></span></label>
+    
+    <label>Кількість (поточна): <span id="currentQuantity"></span></label>
+
+    <label>Опис (поточний): <span id="currentDescription"></span></label>
+
+    <button type="submit">Видалити товар</button>
+  </form>
+</div>
 
   <script>
     // Навігація
@@ -318,10 +360,10 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSubcategories('editCategoryItem', 'editSubcategoryItem');
   loadCategories('editSubcategoryCategorySelect');
   loadCategories('editSubcategoryCategoryNameInForm');
+  loadCategories('subcategoryCategory');
   loadItemsForEdit();
 });
 
-// Універсальна функція showForm
 // Приховує всі форми з класом .form і показує лише одну
 function showForm(formId) {
   document.querySelectorAll('.form').forEach(form => {
@@ -359,7 +401,6 @@ function showAddSubcategoryForm() {
   showForm('subcategoryForm');
 }
 
-
 // Завантаження категорій
 function loadCategories(selectId, selectCategoryId = null) {
   const select = document.getElementById(selectId);
@@ -387,7 +428,7 @@ function loadCategories(selectId, selectCategoryId = null) {
       data.forEach(cat => {
         const option = document.createElement('option');
         option.value = cat.category_id || cat.id;
-        option.textContent = cat.name;  
+        option.textContent = cat.category_name || cat.name;  
         
         if (selectCategoryId && String(option.value) == String(selectCategoryId)){
           option.selected = true;
@@ -446,8 +487,8 @@ function loadSubcategories(categorySelectId, subcategorySelectId) {
   });
 }
 
-    // Додавання товару
-    document.getElementById('addProductForm').addEventListener('submit', function (e) {
+// Додавання товару
+  document.getElementById('addProductForm').addEventListener('submit', function (e) {
   e.preventDefault();
 
   const form = document.getElementById('addProductForm');
@@ -483,15 +524,19 @@ function loadSubcategories(categorySelectId, subcategorySelectId) {
     });
 });
 
+
 // Додавання підкатeгорії
-    document.getElementById('addSubcategoryForm').addEventListener('submit', function (e) {
+  document.getElementById('addSubcategoryForm').addEventListener('submit', function (e) {
   e.preventDefault();
 
   const data = {
     name: document.getElementById('subcategoryName').value,
+    category_id: document.getElementById('subcategoryCategory').value
   };
   
   console.log('API_BASE:', API_BASE);
+  console.log('name:', data.name);
+  console.log('category_id:', data.category_id);
   fetch(`${API_BASE}/api/subcategories`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -552,7 +597,7 @@ function showEditSubcategoryForm() {
   showForm('selectSubcategoryToEdit');
 }
 
-  // Редагування товару
+// Редагування товару
 // Підтягнути список товарів у select
 function loadItemsForEdit() {
   fetch(`${API_BASE}/api/products`)
@@ -693,21 +738,35 @@ document.getElementById('editItemFormElement').addEventListener('submit', functi
 loadSubcategories('editSubcategoryCategorySelect', 'editSubcategorySelect'); 
 
 // При натисканні "Вибрати" для підкатегорії
-document.getElementById('loadSubcategoryDataBtn').addEventListener('click', () => {
+document.getElementById('loadSubcategoryDataBtn').addEventListener('click', (e) => {
+  e.preventDefault();
   const subcategoryId = document.getElementById('editSubcategorySelect').value;
   if (!subcategoryId) return alert('Оберіть підкатегорію');
 
-  fetch(`${API_BASE}/api/subcategories/${subcategoryId}`)
-    .then(res => res.json())
-    .then(sub => {
+  fetch(`${API_BASE}/api/subcategories/id/${subcategoryId}`)
+    .then(res => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+    })
+    .then(subArray => {
+      if(!Array.isArray(subArray) || subArray.length === 0){
+        throw new Error('Підкатегорія не знайдена');
+      }
+      const sub = subArray[0];
+
       document.getElementById('editSubcategoryId').value = sub.id;
-
-      document.getElementById('currentSubcategoryNameSub').textContent = sub.name;
-      document.getElementById('editSubcategoryName').value = sub.name;
-
+      document.getElementById('currentSubcategoryNameSub').textContent = sub.subcategory_name;
+      document.getElementById('editSubcategoryName').value = sub.subcategory_name;
 
       loadCategories('editSubcategoryCategoryNameInForm', sub.category_id);
-      document.getElementById('EditSubcategoryForm').style.display = 'block';
+      document.getElementById('editSubcategoryForm').style.display = 'block';
+      
+      const container = document.getElementById('editSubcategoryForm');
+      if (container) {
+        container.style.display = 'block';
+      } else {
+        console.warn('Елемент EditSubcategoryForm не знайдено');
+      }
     })
     .catch(err => {
       console.error('Помилка завантаження підкатегорії:', err);
@@ -742,75 +801,64 @@ document.getElementById('editSubcategoryFormElement').addEventListener('submit',
     });
 });
 
+loadCategories('editCategorySelect');
 // Редагування категорії
-// Завантаження категорій у селектор для редагування
-function loadCategoriesForEdit() {
-  fetch(`${API_BASE}/api/categories`)
-    .then(res => res.json())
-    .then(data => {
-      const select = document.getElementById('editCategorySelect');
-      if (!select) {
-        console.error('❌ Елемент #editCategorySelect не знайдено в DOM');
-        return;
-      }
-
-      select.innerHTML = '<option value="">-- Виберіть категорію --</option>';
-      data.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat.id;
-        option.textContent = cat.name;
-        select.appendChild(option);
-      });
-    })
-    .catch(err => {
-      console.error('❌ Помилка при завантаженні категорій:', err);
-    });
-}
-
-// Надсилання оновлення категорії
-document.getElementById('loadCategoryDataBtn')?.addEventListener('click', () => {
-  const id = document.getElementById('editCategorySelect')?.value;
-  if (!id) return alert('Оберіть категорію');
-
-  fetch(`${API_BASE}/api/categories/${id}`)
-    .then(res => res.json())
+document.getElementById('loadCategoryDataBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  
+  const categoryId = document.getElementById('editCategorySelect').value;
+  if (!categoryId) return alert('Оберіть категорію');
+  
+  fetch(`${API_BASE}/api/categories/${categoryId}`)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })  
     .then(cat => {
-      document.getElementById('editCategoryId').value = cat.id;
-      document.getElementById('currentCategoryNameCat').textContent = cat.name;
-      document.getElementById('editCategoryName').value = cat.name;
+      document.getElementById('editCategoryCategoryId').value = cat.category_id;
+      document.getElementById('editCategoryName').value = cat.category_name || cat.name;
+      document.getElementById('currentCategoryNameCat').textContent = cat.category_name;
+
       document.getElementById('editCategoryForm').style.display = 'block';
     })
     .catch(err => {
-      console.error('❌ Помилка при завантаженні категорії:', err);
-      alert('Не вдалося отримати дані категорії');
+      console.error('Помилка при завантаженні категорій:', err);
+      alert('Не вдалося завантажити дані категорії');
     });
 });
 
-// Обробник форми редагування
-document.getElementById('editCategoryFormElement')?.addEventListener('submit', function (e) {
+// Надсилання оновлення категорії
+document.getElementById('editCategoryFormElement').addEventListener('submit', function (e) {
   e.preventDefault();
 
-  const id = document.getElementById('editCategoryId')?.value;
+  const categoryId = document.getElementById('editCategoryCategoryId')?.value;
   const updatedName = document.getElementById('editCategoryName')?.value;
-
-  if (!updatedName.trim()) {
+  console.log('ID категорії для оновлення :', categoryId);
+  
+  if(!updatedName.trim()){
     return alert('Назва категорії не може бути порожньою');
   }
 
-  fetch(`${API_BASE}/api/categories/${id}`, {
+  fetch(`${API_BASE}/api/categories/${categoryId}`,{
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: updatedName })
+    headers: {'Content-Type': 'application/json' },
+    body: JSON.stringify({name: updatedName})
   })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw Error(`HTTP ${res.status}`);
+      return res.json();
+    })
     .then(result => {
-      alert(result.message || 'Категорію оновлено');
-      loadCategoriesForEdit();
+
+      const select = document.getElementById('editCategorySelect');
+      const previousValue = select.value;
+
+      loadCategories('editCategorySelect', previousValue);
       document.getElementById('editCategoryForm').style.display = 'none';
     })
     .catch(err => {
-      console.error('❌ Помилка при оновленні категорії:', err);
-      alert('Помилка при оновленні категорії');
+      console.error('Помилка при завантаженні категорії:', err);
+      alert('Не вдалося отримати дані категорії');
     });
 });
 
@@ -818,86 +866,64 @@ document.getElementById('editCategoryFormElement')?.addEventListener('submit', f
 // Показати форму 
  function showDeleteOptions() {
   hideAllModes();
-  showForm();
   document.getElementById('deleteOptions').style.display = 'block';
+  showForm();
 }
     function showDeleteProductForm() {
-  showForm('productForm');
+  showForm('selectItemToDelete');
 }
     function showDeleteCategoryForm() {
-  showForm('categoryForm');
+  showForm('selectCategoryToDelete');
 }
     function showDeleteSubcategoryForm() {
-  showForm('subcategoryForm');
+  showForm('selectSubcategoryToDelete');
 }
 
-    // Видалення товару
-    document.getElementById('deleteItem').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const id = document.getElementById('itemId').value;
-
-      fetch(`${API_BASE}/api/products/${id}`, {
-        method: 'DELETE'
-      })
-        .then(res => res.json())
-        .then(result => {
-          alert(result.message || 'Товар видалено');
-          document.getElementById('deleteItem').reset();
-        });
-    });
-function loadCategoriesForEdit() {
-  fetch(`${API_BASE}/api/categories`)
-    .then(res => res.json())
-    .then(data => {
-      const select = document.getElementById('editCategorySelect');
-      select.innerHTML = '<option value="">-- Виберіть категорію --</option>';
-      data.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat.id;
-        option.textContent = cat.name;
-        select.appendChild(option);
-      });
-    });
-}
-
-document.getElementById('loadCategoryDataBtn').addEventListener('click', () => {
-  const id = document.getElementById('editCategorySelect').value;
-  if (!id) return alert('Оберіть категорію');
-
-  fetch(`${API_BASE}/api/categories/${id}`)
-    .then(res => res.json())
-    .then(cat => {
-      document.getElementById('editCategoryId').value = cat.id;
-      document.getElementById('currentCategoryNameCat').textContent = cat.name;
-      document.getElementById('editCategoryName').value = cat.name;
-      document.getElementById('editCategoryForm').style.display = 'block';
-    });
-});
-
-document.getElementById('editCategoryFormElement').addEventListener('submit', function (e) {
+// Видалення товару
+document.getElementById('deleteItemFormElement').addEventListener('submit', function (e) {
   e.preventDefault();
+  
+  const itemId = document.getElementById('itemId').value;
+  const categoryId = document.getElementById('categoryId').value;
+  const subcategoryId = document.getElementById('subcategoryId').value;
+  const stock = document.getElementById('stock').value;
+  const price = document.getElementById('price').value;
 
-  const id = document.getElementById('editCategoryId').value;
-  const updated = {
-    name: document.getElementById('editCategoryName').value
-  };
+  const imgEl = document.getElementById('currentImage');
+    if (imgEl) {
+      imgEl.src = item.image && item.image.trim() !== '' ? item.image : '/uploads/products/no-image.jpg';
+    }
 
-  fetch(`${API_BASE}/api/categories/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(updated)
+  fetch(`${API_BASE}/api/products/${id}`, {
+    method: 'DELETE'
   })
-    .then(res => res.json())
+    .then(res => {
+      if(!res.ok) throw new Error('Помилка при видалені товару');
+      return res.json();
+    })
     .then(result => {
-      alert(result.message || 'Категорію оновлено');
-      loadCategoriesForEdit();
-      document.getElementById('editCategoryForm').style.display = 'none';
+      alert(result.message || 'Товар видалено');
+      document.getElementById('deleteItem').reset();
     })
     .catch(err => {
       console.error(err);
-      alert('Помилка при оновленні категорії');
-    });
+      alert('Не вдалося видалити товар.');
+    }); 
 });
+
+//Видалення невикористовуваних зображень
+function cleanupImages() {
+    fetch('/api/images/cleanup', {
+      method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('cleanup-result').innerText = data.message;
+    })
+    .catch(error => {
+      document.getElementById('cleanup-result').innerText = 'Помилка: ' + error.message;
+    });
+  }
 
   </script>
 </body>

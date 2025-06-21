@@ -20,7 +20,7 @@
             left: 0; /* Панель знаходиться з лівого боку */
             width: 150px; /* Ширина панелі */
             height: 100%; /* Панель займає всю висоту екрана */
-            background-color: #333; /* Темний фон для панелі */
+            background-color: #e6f4f8; /* Темний фон для панелі */
             padding-top: 20px; /* Відступ зверху */
         }
 
@@ -30,24 +30,13 @@
             width: 100%; /* Кнопки займають всю ширину панелі */
             padding: 10px; /* Відступи всередині кнопок */
             margin-bottom: 10px; /* Відступ між кнопками */
-            background-color: #4CAF50; /* Колір кнопок */
-            color: white; /* Колір тексту */
+            background-color: #37ddf3; /* Колір кнопок */
+            color: black; /* Колір тексту */
             border: none; /* Без обведення */
             text-align: left; /* Текст вирівняно по лівому краю */
             cursor: pointer; /* Зміна курсора на вказівник при наведенні */
         }
 
-    /* Стилізація кнопок категорій */
-    .category-button {
-      padding: 10px 20px;
-      margin: 10px;
-      background-color: #d56e05;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
 
     .category-button:hover {
       background-color: #0056b3;
@@ -87,9 +76,10 @@
 <script>
   document.addEventListener('DOMContentLoaded', loadProducts);
 
+  const API_BASE = 'http://localhost:3000';
   async function loadProducts() {
     try {
-      const response = await fetch('https://diplom-plumbering-shop.onrender.com/api/products');
+      const response = await fetch('http://localhost:3000/api/products');
       const products = await response.json();
 
       const container = document.getElementById('product-container');
@@ -101,16 +91,23 @@
       }
 
       products.forEach(product => {
-  const card = document.createElement('div');
-  card.className = 'product-card';
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        
+        const img = document.createElement('img');
+        img.src = `${API_BASE}/${product.image}`;
+        img.alt = product.name;
+        img.style.maxWidth = '200px';
+        card.appendChild(img);
 
-  card.innerHTML = `
-    <h3>${product.name}</h3>
-    <p>${product.description}</p>
-    <p><strong>Ціна:</strong> ${product.price} грн</p>
-    <p><strong>Кількість:</strong> ${product.stock}</p>
-    <p><strong>Категорія:</strong> ${product.category_name}: ${product.subcategory_name || '—'}</p>
-  `;
+          card.innerHTML = `
+          <h3>${product.name}</h3>
+          <p>${product.image}</p>
+          <p>${product.description}</p>
+          <p><strong>Ціна:</strong> ${product.price} грн</p>
+          <p><strong>Кількість:</strong> ${product.stock}</p>
+          <p><strong>Категорія:</strong> ${product.category_name}: ${product.subcategory_name || '—'}</p>
+        `;
 
   container.appendChild(card);
 });

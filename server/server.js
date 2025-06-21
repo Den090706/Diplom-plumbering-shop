@@ -7,7 +7,8 @@ const util = require('util');
 require('dotenv').config();
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs')
+const fs = require('fs');
+const { error, log } = require('console');
 
 const uploadDir = path.join(__dirname, 'uploads/products');
 
@@ -55,7 +56,7 @@ app.post('/api/admin_password', (req, res) => {
   }
 });
 
-app.use('/uploads/products', express.static(path.join(__dirname, '../uploads/products')));
+app.use('/uploads/', express.static(path.join(__dirname, '../uploads/')));
 
 // === Middleware ===
 app.use(express.urlencoded({ extended: true }));
@@ -79,9 +80,9 @@ const db = mysql.createConnection({
 
 db.connect(err => {
   if (err) {
-    console.error('❌ Помилка підключення до БД:', err);
+    console.error('Помилка підключення до БД:', err);
   } else {
-    console.log('✅ Підключено до MySQL (plumber_shop)');
+    console.log('Підключено до MySQL (plumber_shop)');
   }
 });
 
@@ -90,6 +91,40 @@ const queryAsync = util.promisify(db.query).bind(db);
 
 // Зобраеження з теки 'diplom' 
 app.use(express.static(path.join(__dirname, '..')));
+
+// Отримуємо всі файли папки
+const filesInFolder = fs.readdirSync(uploadDir);
+
+// Отримуємо зображення з БД
+function cleanUnusedImages(){
+  const uploadDir = path.join(__dirname, 'uploads/products');
+  const filesInFolder = fs.readdirSync(uploadDir);
+
+db.query('SELECT image FROM products WHERE image IS NOT NULL', (err, results) => {
+  if (err) throw err;
+
+  const usedImages = results.map(row => path.basename(row.image));
+  const unusedImages = filesInFolder.filter(file => !usedImages.includes(file));
+
+  unusedImages.forEach(file => {
+    const filePath = path.join(uploadDir, file);
+    if(simulate){
+      console.log('[SIMULATION] Буде видалено:', file);
+    } else{
+    fs.unlinkSync(filePath, err =>{
+      if (err) console.warn('Не вдалося видалити файл: ', filePath);
+      console.log('Видалено:', file);
+        });
+      }
+    });
+  });
+}
+
+//Запуск очищення
+app.delete('/api/images/cleanup', (req, res) => {
+  cleanUnusedImages(false); 
+  res.json({ message: 'Очищення запущено (перевір логи сервера)' });
+});
 
 // Маршрут, який віддає головний HTML
 app.get('/', (req, res) => {
@@ -102,7 +137,7 @@ app.get('/api/categories', async (req, res) => {
     const results = await queryAsync('SELECT * FROM categories');
     res.json(results);
   } catch (err) {
-    console.error('❌ Категорії:', err);
+    console.error('Категорії:', err);
     res.status(500).json({ error: 'Помилка сервера при отриманні категорій' });
   }
 });
@@ -119,12 +154,30 @@ app.get('/api/subcategories', async (req, res) => {
 
     res.json(results); // повертаємо масив підкатегорій
   } catch (err) {
-    console.error('❌ Помилка при отриманні всіх підкатегорій:', err.message);
+    console.error('Помилка при отриманні всіх підкатегорій:', err.message);
     res.status(500).json({ error: 'Помилка сервера при отриманні підкатегорій' });
   }
 });
 
-// Отримання підкатегорій за ID категорії
+//Отримання однієї категорії за id
+app.get('/api/categories/:id', (req, res) => {
+  const categoryId = req.params.id;
+
+  const query = 'SELECT * FROM categories WHERE category_id = ?';
+  db.query(query, [categoryId], (err, results) => {
+    if(err){
+      console.log('Помилка отримання категорії: ', err);
+      return res.status(500).json({error: 'Помилка сервера'});
+    }
+  
+    if (results.length === 0){
+      return res.status(404).json({error: 'Категорію не знайдено'});
+    }
+    res.json(results[0]);
+  });
+});
+
+// Отримання підкатегорій за id категорії
 app.get('/api/subcategories/:categoryId', async (req, res) => { //можливо замінити /api/categories/:categoryId/subcategories
   const categoryId = req.params.categoryId;
   console.log('Запит підкатегорій для категорії ID:', categoryId);
@@ -140,8 +193,29 @@ app.get('/api/subcategories/:categoryId', async (req, res) => { //можливо
 
     res.json(results);
   } catch (err) {
-    console.error('❌ Помилка при отриманні підкатегорій за категорією:', err.message);
+    console.error('Помилка при отриманні підкатегорій за категорією:', err.message);
     res.status(500).json({ error: 'Помилка сервера при отриманні підкатегорій' });
+  }
+});
+// Отримання однієї підкатегорії за її id
+app.get('/api/subcategories/id/:subcategoryId', async (req, res) => {
+  const subcategoryId = req.params.subcategoryId;
+
+  try {
+    const results = await queryAsync(`
+      SELECT subcategory_id AS id, name AS subcategory_name, category_id
+      FROM subcategories
+      WHERE subcategory_id = ?
+    `, [subcategoryId]);
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Підкатегорія не знайдена' });
+    }
+
+    res.json(results);
+  } catch (err) {
+    console.error('Помилка при отриманні підкатегорії за ID:', err.message);
+    res.status(500).json({ error: 'Помилка сервера при отриманні підкатегорії' });
   }
 });
 
@@ -176,7 +250,7 @@ app.get('/api/products/:id', async (req, res) => {
 
     res.json(results[0]);
   } catch (err) {
-    console.error('❌ Помилка при отриманні товару:', err.message);
+    console.error('Помилка при отриманні товару:', err.message);
     res.status(500).json({ error: 'Помилка сервера при отриманні товару' });
   }
 });
@@ -203,7 +277,7 @@ app.get('/api/products', async (req, res) => {
 
     res.json(results);
   } catch (err) {
-    console.error('❌ Отримання товарів:', err);
+    console.error('Отримання товарів:', err);
     res.status(500).json({ error: 'Помилка сервера при отриманні товарів' });
   }
 });
@@ -255,8 +329,21 @@ app.put('/api/products/:id', upload.single('image'), (req, res) => {
     if (results.length === 0) {
       return res.status(404).json({ error: 'Товар не знайдено' });
     }
+    const oldImagePath = results[0].image;
+
+    if (req.file && oldImagePath) {
+      const fullOldPath = path.join(__dirname, '...', oldImagePath);
+      fs.unlink(fullOldPath, (err) => {
+        if (err) {
+          console.warn('Не вдалося видалити старе зображення:', fullOldPath, err.message);
+        } else {
+          console.log('Старе зображення видалено:', fullOldPath);
+        }
+      });
+    }
 
     const imageFile = req.file ? '/uploads/products/' + req.file.filename : results[0].image;
+    const { name, category_id, subcategory_id, description, price, stock } = req.body;
 
     const query = `UPDATE products 
     SET name = ?, category_id = ?, subcategory_id = ?, description = ?, price = ?, stock = ?, image = ?
@@ -274,14 +361,35 @@ app.put('/api/products/:id', upload.single('image'), (req, res) => {
 // Видалення товару - змінити
 app.delete('/api/products/:id', (req, res) => {
   const productId = req.params.id;
-  db.query('DELETE FROM products WHERE product_id = ?', [productId], (err, result) => {
+  
+  const getProductQuery = 'Select image From products WHERE product_id = ?';
+  db.query(getProductQuery, [productId], (err, results) => {
+
+    if(err){
+      console.error('Помилка отримання товару', err);
+      return res.status(500).json({error: 'Товар не знайдено'});
+    }
+    const imagePath = results[0].image;
+    const fullImagePath = path.join(__dirname, 'uploads', 'products', imagePath);
+  
+    db.query('DELETE FROM products WHERE product_id = ?', [productId], (err, result) => {
     if (err) {
       console.error('Помилка видалення товару:', err);
       res.status(500).json({ error: 'Помилка сервера' });
     } else {
       res.json({ message: 'Товар видалено' });
     }
+    if(imagePath && !imagePath.includes('no-image.jpg')){
+      fs.unlink(fullImagePath, (err) => {
+        if (err){
+          console.error('Не вдалося видалити зображення', fullImagePath, err.message);
+        } else{
+          console.log('Зображення видалено')
+        }
+      });
+    }
   });
+ });
 });
 
 // Маршрути для додавання, оновлення, видалення підкатегорій
@@ -300,7 +408,7 @@ app.post('/api/subcategories', (req, res) => {
 
   db.query(
     query,
-    [name],
+    [name, category_id],
     (err, results) => {
       if (err) {
         console.error('Помилка додавання підкатегорії:', err);
@@ -314,7 +422,7 @@ app.post('/api/subcategories', (req, res) => {
 // Оновлення підкатегорії
 app.put('/api/subcategories/:id', (req, res) => {
   const productId = req.params.id;
-  const { name, category_id, subcategory_id} = req.body;
+  const { name, category_id} = req.body;
 
   if (!name || !category_id) {
     return res.status(400).json({ error: 'Усі поля повинні бути заповнені' });
@@ -402,7 +510,7 @@ app.put('/api/categories/:id', (req, res) => {
       return res.status(404).json({ error: 'Товар не знайдено' });
     }
 
-    const query = 'UPDATE categories SET name = ?,  WHERE category_id = ?';
+    const query = 'UPDATE categories SET name = ?  WHERE category_id = ?';
     db.query(query, [name, productId], (err, result) => {
       if (err) {
         console.error('Помилка редагування товару:', err);
