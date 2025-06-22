@@ -9,6 +9,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { error, log } = require('console');
+const bcrypt = require('bcrypt');
+const session = require('express-session');
 
 const uploadDir = path.join(__dirname, 'uploads/products');
 
@@ -58,10 +60,10 @@ app.post('/api/admin_password', (req, res) => {
 
 app.use('/uploads/', express.static(path.join(__dirname, '../uploads/')));
 
-// === Middleware ===
+// Middleware
 app.use(express.urlencoded({ extended: true }));
 
-// === MySQL Connection === 
+/* // MySQL Connection 
  const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -69,14 +71,15 @@ app.use(express.urlencoded({ extended: true }));
   database: process.env.DB_NAME,
   port: process.env.DB_PORT || 3306,
 });
+*/
 
-/*const db = mysql.createConnection({
+const db = mysql.createConnection({
   host: 'localhost',       
   user: 'root',            
   password: '5555',   
   database: 'plumber_shop' 
 });
-*/
+
 
 db.connect(err => {
   if (err) {
@@ -88,6 +91,107 @@ db.connect(err => {
 
 const queryAsync = util.promisify(db.query).bind(db);
 
+// Підключення middleware для парсингу форм
+app.use(express.urlencoded({ extended: true }));
+
+// Підключення middleware для сесій
+app.use(session({
+  secret: 'yourSecretKey',
+  resave: false,
+  saveUninitialized: false,
+}));
+
+// МІДЛВАР ДЛЯ ЗАХИСТУ ДОСТУПУ 
+function authMiddleware(req, res, next) {
+  if (!req.session.userId) {
+    return res.redirect('/login.html');
+  }
+  next();
+}
+
+// Реєстрація користувача
+app.post('/register', async (req, res) => {
+  const { name, email, password } = req.body;
+
+  const hash = await bcrypt.hash(password, 10);
+
+  try {
+    await queryAsync(
+      'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+      [name, email, hash, 'customer']
+    );
+    res.status(201).send('Користувача створено');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Помилка сервера');
+  }
+});
+
+// Вхід користувача
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await queryAsync('SELECT * FROM users WHERE email = ?', [email]);
+  if (user.length === 0) {
+    return res.status(401).send('Користувача не знайдено');
+  }
+
+  const foundUser = user[0];
+
+  const passwordMatch = await bcrypt.compare(password, foundUser.password);
+  if (!passwordMatch) {
+    return res.status(401).send('Невірний пароль');
+  }
+
+  // Збереження даних користувача в сесії
+  req.session.userId = foundUser.user_id;
+  req.session.userName = foundUser.name;
+  req.session.userRole = foundUser.role;
+
+  let cart = await queryAsync('SELECT cart_id FROM carts WHERE user_id = ?', [foundUser.user_id]);
+
+  let cartId;
+  if (cart.length > 0) {
+    cartId = cart[0].cart_id;
+  } else {
+    const result = await queryAsync('INSERT INTO carts (user_id) VALUES (?)', [foundUser.user_id]);
+    cartId = result.insertId;
+  }
+
+  res.json({
+    userId: foundUser.user_id,
+    name: foundUser.name,
+    role: foundUser.role,
+    cartId
+  });
+});
+
+// Перевірка статусу авторизації
+app.get('/check-auth', (req, res) => {
+  if (req.session && req.session.userId) {
+    res.json({ loggedIn: true, userName: req.session.userName });
+  } else {
+    res.json({ loggedIn: false });
+  }
+});
+
+// Вихід користувача
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).send('Помилка при виході');
+    }
+    res.redirect('/login.html');
+  });
+});
+
+/*
+//  ЗАХИСТ СТОРІНОК 
+// Доступ до головної сторінки лише для авторизованих користувачів
+app.get('/main.html', authMiddleware, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'main.html'));
+});
+*/
 
 // Зобраеження з теки 'diplom' 
 app.use(express.static(path.join(__dirname, '..')));
@@ -197,6 +301,7 @@ app.get('/api/subcategories/:categoryId', async (req, res) => { //можливо
     res.status(500).json({ error: 'Помилка сервера при отриманні підкатегорій' });
   }
 });
+
 // Отримання однієї підкатегорії за її id
 app.get('/api/subcategories/id/:subcategoryId', async (req, res) => {
   const subcategoryId = req.params.subcategoryId;
@@ -226,7 +331,7 @@ app.get('/api/products/:id', async (req, res) => {
   try {
     const query = `
       SELECT 
-        p.product_id AS id,
+        p.product_id AS product_id,
         p.name,
         p.description,
         p.price,
@@ -279,6 +384,169 @@ app.get('/api/products', async (req, res) => {
   } catch (err) {
     console.error('Отримання товарів:', err);
     res.status(500).json({ error: 'Помилка сервера при отриманні товарів' });
+  }
+});
+
+// Отримання товарів за ID підкатегорії
+app.get('/api/products/subcategory/:subcategoryId', async (req, res) => {
+  const subcategoryId = req.params.subcategoryId;
+
+  try {
+    const results = await queryAsync(`
+      SELECT p.*, c.name AS category_name, s.name AS subcategory_name
+      FROM products p
+      JOIN categories c ON p.category_id = c.category_id
+      LEFT JOIN subcategories s ON p.subcategory_id = s.subcategory_id
+      WHERE p.subcategory_id = ?
+    `, [subcategoryId]);
+
+    res.json(results);
+  } catch (err) {
+    console.error('Помилка при отриманні товарів по підкатегорії:', err.message);
+    res.status(500).json({ error: 'Помилка сервера при отриманні товарів' });
+  }
+});
+
+//КОШИК
+// Отримати/створити
+app.post('/api/cart', async (req, res) => {
+  const { userId } = req.body;
+
+  const existing = await queryAsync('SELECT * FROM carts WHERE user_id = ?', [userId]);
+
+  if (existing.length > 0) {
+    res.json(existing[0]);
+  } else {
+    const result = await queryAsync('INSERT INTO carts (user_id) VALUES (?)', [userId]);
+    res.json({ cart_id: result.insertId, user_id: userId });
+  }
+});
+
+// Додати товар у кошик
+app.post('/api/cart/add', async (req, res) => {
+  try {
+    const { cartId, productId, quantity } = req.body;
+
+    if (!cartId || !productId || !quantity || quantity < 1) {
+      return res.status(400).json({ error: 'Некоректні дані для кошика' });
+    }
+
+    const existing = await queryAsync(
+      'SELECT * FROM cart_items WHERE cart_id = ? AND product_id = ?',
+      [cartId, productId]
+    );
+
+    if (existing.length > 0) {
+      await queryAsync(
+        'UPDATE cart_items SET quantity = quantity + ? WHERE item_id = ?',
+        [quantity, existing[0].item_id]
+      );
+    } else {
+      await queryAsync(
+        'INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (?, ?, ?)',
+        [cartId, productId, quantity]
+      );
+    }
+
+    res.json({ message: 'Товар додано до кошика' });
+  } catch (err) {
+    console.error('Помилка у /cart/add:', err);
+    res.status(500).json({ error: 'Помилка при додаванні товару до кошика' });
+  }
+});
+
+//Отримати вміст кошика
+app.get('/api/cart/:cartId', async (req, res) => {
+  const { cartId } = req.params;
+
+  const items = await queryAsync(`
+    SELECT ci.quantity, p.*
+    FROM cart_items ci
+    JOIN products p ON ci.product_id = p.product_id
+    WHERE ci.cart_id = ?
+  `, [cartId]);
+
+  res.json(items);
+});
+
+// Oновлення кількості товару
+app.post('/api/cart/update', async (req, res) => {
+  const { cartId, productId, change } = req.body;
+
+  if (!cartId || !productId || !change) {
+    return res.status(400).json({ error: 'Відсутні обовʼязкові параметри' });
+  }
+
+  try {
+    const [item] = await queryAsync(
+      `SELECT quantity FROM cart_items WHERE cart_id = ? AND product_id = ?`,
+      [cartId, productId]
+    );
+
+    if (!item) {
+      if (change > 0) {
+        await queryAsync(
+          `INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (?, ?, ?)`,
+          [cartId, productId, change]
+        );
+      }
+    } else {
+      const newQty = item.quantity + change;
+      if (newQty <= 0) {
+        await queryAsync(
+          `DELETE FROM cart_items WHERE cart_id = ? AND product_id = ?`,
+          [cartId, productId]
+        );
+      } else {
+        await queryAsync(
+          `UPDATE cart_items SET quantity = ? WHERE cart_id = ? AND product_id = ?`,
+          [newQty, cartId, productId]
+        );
+      }
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Помилка при оновленні товару в кошику:', err.message);
+    res.status(500).json({ error: 'Помилка сервера' });
+  }
+});
+
+// Bидалення товару повністю
+app.post('/api/cart/remove', async (req, res) => {
+  const { cartId, productId } = req.body;
+
+  if (!cartId || !productId) {
+    return res.status(400).json({ error: 'Відсутні обовʼязкові параметри' });
+  }
+
+  try {
+    await queryAsync(
+      `DELETE FROM cart_items WHERE cart_id = ? AND product_id = ?`,
+      [cartId, productId]
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Помилка при видаленні товару з кошика:', err.message);
+    res.status(500).json({ error: 'Помилка сервера' });
+  }
+});
+
+// Oчищення кошика
+app.post('/api/cart/clear', async (req, res) => {
+  const { cartId } = req.body;
+
+  if (!cartId) {
+    return res.status(400).json({ error: 'Не вказано cartId' });
+  }
+
+  try {
+    await queryAsync(`DELETE FROM cart_items WHERE cart_id = ?`, [cartId]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Помилка при очищенні кошика:', err.message);
+    res.status(500).json({ error: 'Помилка сервера' });
   }
 });
 
@@ -358,38 +626,43 @@ app.put('/api/products/:id', upload.single('image'), (req, res) => {
   });
 });
 
-// Видалення товару - змінити
+// Видалення товару
 app.delete('/api/products/:id', (req, res) => {
   const productId = req.params.id;
-  
-  const getProductQuery = 'Select image From products WHERE product_id = ?';
-  db.query(getProductQuery, [productId], (err, results) => {
 
-    if(err){
+  const getProductQuery = 'SELECT image FROM products WHERE product_id = ?';
+  db.query(getProductQuery, [productId], (err, results) => {
+    if (err) {
       console.error('Помилка отримання товару', err);
-      return res.status(500).json({error: 'Товар не знайдено'});
+      return res.status(500).json({ error: 'Помилка сервера' });
     }
+
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: 'Товар не знайдено' });
+    }
+
     const imagePath = results[0].image;
     const fullImagePath = path.join(__dirname, 'uploads', 'products', imagePath);
-  
+
     db.query('DELETE FROM products WHERE product_id = ?', [productId], (err, result) => {
-    if (err) {
-      console.error('Помилка видалення товару:', err);
-      res.status(500).json({ error: 'Помилка сервера' });
-    } else {
+      if (err) {
+        console.error('Помилка видалення товару:', err);
+        return res.status(500).json({ error: 'Помилка при видаленні товару' });
+      }
+
+      if (imagePath && !imagePath.includes('no-image.jpg')) {
+        fs.unlink(fullImagePath, (err) => {
+          if (err) {
+            console.error('Не вдалося видалити зображення', fullImagePath, err.message);
+          } else {
+            console.log('Зображення видалено:', imagePath);
+          }
+        });
+      }
+
       res.json({ message: 'Товар видалено' });
-    }
-    if(imagePath && !imagePath.includes('no-image.jpg')){
-      fs.unlink(fullImagePath, (err) => {
-        if (err){
-          console.error('Не вдалося видалити зображення', fullImagePath, err.message);
-        } else{
-          console.log('Зображення видалено')
-        }
-      });
-    }
+    });
   });
- });
 });
 
 // Маршрути для додавання, оновлення, видалення підкатегорій
@@ -542,5 +815,5 @@ app.use((req, res) => {
 // Запуск сервера
 const server = http.createServer(app);
 server.listen(PORT, () => {
-  console.log(`🚿 Сервер працює: http://localhost:${PORT}`);
+  console.log(`Сервер працює: http://localhost:${PORT}`);
 });

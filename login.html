@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Магазин сантехніки</title>
+<style>
+.topnav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #37ddf3;
+  padding: 14px 20px;
+  font-weight: bold;
+}
+
+.shop-name {
+  font-size: 20px;
+  color: black;
+}
+
+.auth-buttons a {
+  text-decoration: none;
+  padding: 10px 15px;
+  margin-left: 10px;
+  background-color: #e6f4f8;
+  color: black;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.auth-buttons a:hover {
+  background-color: #2ac1d5;
+}
+
+.product-card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 1rem;
+  width: 250px;
+  background-color: #f9f9f9;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.product-card:hover {
+  transform: scale(1.03);
+}
+
+</style>
+</head>
+<body>
+  <div class="topnav-bar">
+    <div class="shop-name">Plumbering shop</div>
+    <div class="auth-buttons" id="authButtons">
+      <a href="login.html" id="loginBtn">Увійти</a>
+      <a href="/logout" id="logoutBtn" style="display:none;">Вийти</a>
+      <a href="cart.html">Кошик 🛒</a>
+    </div>
+  </div>
+
+  <nav class="topnav">
+    <a href="main.html">Головна</a>
+    <a href="aboutUs.html">Про нас</a>
+    <a href="admin.html">Адміністратор</a>
+  </nav>
+
+  <h2>Авторизація / Реєстрація</h2>
+  <div>
+    <button onclick="switchForm('login')">Увійти</button>
+    <button onclick="switchForm('register')">Зареєструватися</button>
+  </div>
+
+  <!-- Форма входу -->
+  <form id="loginForm">
+    <h3>Вхід</h3>
+    <label>Email:</label><br>
+    <input type="email" id="loginEmail" required><br>
+    <label>Пароль:</label><br>
+    <input type="password" id="loginPassword" required><br><br>
+    <button type="submit">Увійти</button>
+  </form>
+
+  <!-- Форма реєстрації -->
+  <form id="registerForm" method="POST" action="/register" style="display:none;">
+    <h3>Реєстрація</h3>
+    <label>Ім’я:</label><br>
+    <input type="text" name="name" required><br>
+    <label>Email:</label><br>
+    <input type="email" name="email" required><br>
+    <label>Пароль:</label><br>
+    <input type="password" name="password" required><br><br>
+    <button type="submit">Зареєструватися</button>
+  </form>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginBtn = document.getElementById('loginBtn');
+
+    if (userId && userName) {
+      if (logoutBtn) logoutBtn.style.display = 'inline-block';
+      if (loginBtn) loginBtn.style.display = 'none';
+    } else {
+      if (logoutBtn) logoutBtn.style.display = 'none';
+      if (loginBtn) loginBtn.style.display = 'inline-block';
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        await fetch('/logout');
+        localStorage.clear();
+        window.location.href = 'login.html';
+      });
+    }
+  });
+
+    function switchForm(type) {
+      document.getElementById('loginForm').style.display = type === 'login' ? 'block' : 'none';
+      document.getElementById('registerForm').style.display = type === 'register' ? 'block' : 'none';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const res = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!res.ok) {
+          const error = await res.text();
+          alert(error || 'Помилка входу');
+          return;
+        }
+
+        const data = await res.json();
+
+        localStorage.setItem('userId', data.userId);
+        localStorage.setItem('userName', data.name);
+        localStorage.setItem('userRole', data.role);
+        localStorage.setItem('cartId', data.cartId);
+
+        window.location.href = 'main.html';
+      } catch (err) {
+        console.error('Помилка входу:', err);
+        alert('Сервер недоступний або сталася помилка');
+      }
+    });
+  </script>
+</body>
+</html>

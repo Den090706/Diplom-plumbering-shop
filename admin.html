@@ -4,39 +4,92 @@
   <meta charset="UTF-8">
   <title>Панель адміністратора</title>
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-  }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
 
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 150px;
-    height: 100%;
-    background-color: #e6f4f8;
-    padding-top: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  }
+.name-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 14px 20px;
+  background-color: #37ddf3;
+  box-sizing: border-box;
+  border-bottom: 2px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-  .sidebar button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #37ddf3;
-    color: black;
-    border: none;
-    text-align: left;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
+.shop-name {
+  font-size: 20px;
+  color: black;
+  font-weight: bold;
+  user-select: none;
+}
 
-  .sidebar button:hover {
-    background-color: #2ac1d5;
-  }
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.auth-buttons a {
+  text-decoration: none;
+  padding: 10px 15px;
+  background-color: #82a7b1;
+  color: black;
+  border-radius: 5px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.auth-buttons a:hover {
+  background-color: #2ac1d5;
+  box-shadow: 0 4px 10px rgba(42, 193, 213, 0.6);
+}
+
+.topnav {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(90deg, #5a64f5, #3a44e1);
+  border: none;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  box-shadow: inset 0 -3px 5px rgba(0,0,0,0.1);
+}
+
+.topnav a {
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+  padding: 14px 20px;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+  border-radius: 4px;
+  margin-left: 0px;
+}
+
+.topnav a:hover {
+  background-color: #2ac1d5;
+  color: black;
+  box-shadow: 0 2px 8px rgba(42, 193, 213, 0.7);
+}
+
+.name-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 14px 20px;
+  background-color: #37ddf3;
+  box-sizing: border-box;
+  border-bottom: 2px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
   .admin-container {
     margin-left: 170px;
@@ -49,57 +102,105 @@
     padding: 20px;
   }
 
-  .admin-panel .btn {
-    margin: 10px;
-    padding: 10px 20px;
-    background-color: #37ddf3;
-    color: black;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  .admin-panel .btn:hover {
-    background-color: #37ddf3;
-    color: black;
-  }
-
-  .form {
-    display: none;
-    margin-top: 20px;
-    margin-left: 170px;
+.admin-panel .btn {
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #37ddf3;
+  color: black;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 5px;
 }
 
-  .add-options {
-    margin-top: 20px;
-  }
+.admin-panel .btn:hover {
+  background-color: #37ddf3;
+  color: black;
+}
 
-  .add-options button {
-    margin-right: 10px;
-    padding: 10px;
-    margin-left: 170px;
-  }
+.form {
+  display: none;
+  margin-top: 20px;
+  margin-left: 170px;
+}
 
-  #editOptions button {
-    margin-right: 10px;
-    padding: 10px;
-    margin-left: 170px;
-  }
+.add-options {
+  margin-top: 20px;
+}
 
+#addOptions button {
+  margin-right: 10px;
+  padding: 10px;
+  margin-left: 170px;
+  background-color: #04bd23;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold;
+  border-radius: 5px;
+}
 
-  #category, #subcategory {
-    color: black;
-    background-color: #e6f4f8;
-  }
+#addOptions button:hover {
+  background-color: #03991c;
+}
+
+#editOptions button {
+  margin-right: 10px;
+  padding: 10px;
+  margin-left: 170px;
+  background-color: #ffd633;
+  color: black;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+#editOptions button:hover {
+  background-color: #f4c400;
+}
+
+#deleteOptions button {
+  margin-right: 10px;
+  padding: 10px;
+  margin-left: 170px;
+  background-color: #f55c5c;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+#deleteOptions button:hover {
+  background-color: #d84343;
+}
+
+#category, #subcategory {
+  color: black;
+  background-color: #e6f4f8;
+}
 </style>
 
 <body>
-  <!-- Бокова панель -->
-  <div class="sidebar">
-    <button class="sidebar-btn" data-target="main.html">Головна</button>
-    <button class="sidebar-btn" data-target="aboutUs.html">Про нас</button>
-    <button class="sidebar-btn" data-target="admin.html">Увійти як адміністратор</button>
+<div class="name-bar">
+  <div class="shop-name">Plumbering shop</div>
+  <div class="auth-buttons" id="authButtons">
+    <a href="login.html" id="loginBtn">Увійти</a>
+    <a href="/logout" id="logoutBtn" style="display:none;">Вийти</a>
+    <a href="cart.html">Кошик 🛒</a>
   </div>
+</div>
+
+<!-- Навігаційна панель -->
+<nav class="topnav">
+  <a href="main.html">Головна</a>
+  <a href="aboutUs.html">Про нас</a>
+  <a href="admin.html">Адміністратор</a>
+</nav>
 
   <!-- Правий контент -->
   <div class="admin-container">
@@ -170,7 +271,7 @@
     </div>
 
 <!-- РЕДАГУВАННЯ -->
- <!-- Вибір для редагування -->
+<!-- Вибір для редагування -->
 <div class="edit-options" id="editOptions" style="display: none;">
   <button onclick="showForm('selectItemToEdit')">Товар</button>
   <button onclick="showForm('selectSubcategoryToEdit')">Підкатегорію</button>
@@ -273,41 +374,71 @@
 
 <!-- ВИДАЛЕННЯ -->
 <!-- Вибір для видалення -->
-<div class="edit-options" id="editOptions" style="display: none;">
+<div class="edit-options" id="deleteOptions" style="display: none;">
   <button onclick="showForm('selectItemToDelete')">Товар</button>
-  <button onclick="showForm('selectSubcategoryToDelete')">Підкатегорію</button>
+  <button onclick="showForm('selectSubcategoryToDelete'); initDeleteSubcategoryForm();">Підкатегорію</button>
   <button onclick="showForm('selectCategoryToDelete')">Категорію</button>
 </div>
 
-<!-- Вибір товару -->
+<!-- Вибір об'єкту -->
 <div id="selectItemToDelete" class="form" style="display: none;">
-  <h3>Оберіть товар для видалення</h3>
-  <select id="editItemSelect" required></select>
+  <h3>Оберіть об'єкт для видалення</h3>
+  <select id="deleteItemSelect" required></select>
   <button id="loadItemToDeleteBtn" type="button">Вибрати</button>
 </div>
 
-<!-- Форма видалення товару -->
+
 <div id="deleteItemForm" class="form" style="display: none;">
-  <h3>Видалення товару</h3>
-  <form id="deleteItemFormElement" method="post">
-    <input type="hidden" id="deleteItemIdItem">
+  <h3>Видалити товар</h3>
+  <form id="deleteItemFormElement">
+    <input type="hidden" id="deleteItemId">
+    <p><strong>Назва:</strong> <span id="deleteItemName"></span></p>
+    <p><strong>Ціна:</strong> <span id="deleteItemPrice"></span></p>
+    <p><strong>Категорія:</strong> <span id="deleteItemCategory"></span></p>
+    <p><strong>Підкатегорія:</strong> <span id="deleteItemSubcategory"></span></p>
+    <p><strong>Кількість:</strong> <span id="deleteItemStock"></span></p>
+    <p><strong>Опис:</strong> <span id="deleteItemDescription"></span></p>
+    <img id="deleteItemImage" src="/uploads/products/no-image.jpg" alt="Зображення товару" width="150">
+    <button type="submit">Видалити</button>
+  </form>
+</div>
 
-    <label>Назва товару (поточна): <span id="currentItemName"></span></label>
+<!-- Форма видалення підкатегорії -->
+<div id="selectSubcategoryToDelete" class="form" style="display: none;">
+  <h3>Виберіть підкатегорію для видалення</h3>
+  
+  <label for="deleteCategorySelect">Категорія:</label><br>
+  <select id="deleteCategorySelect"></select><br><br>
+  
+  <label for="deleteSubcategorySelect">Підкатегорія:</label><br>
+  <select id="deleteSubcategorySelect" disabled></select><br><br>
+  
+  <button id="loadSubcategoryToDeleteBtn" type="button">Вибрати</button>
+</div>
 
-    <label>Ціна (поточна): <span id="currentPrice"></span></label>
+<div id="deleteSubcategoryForm" class="form" style="display: none;">
+  <h3>Видалити підкатегорію</h3>
+  <form id="deleteSubcategoryFormElement">
+    <input type="hidden" id="deleteSubcategoryId">
+    <p><strong>Назва:</strong> <span id="deleteSubcategoryName"></span></p>
+    <p><strong>Категорія:</strong> <span id="deleteSubcategoryCategoryName"></span></p>
+    <button type="submit">Видалити</button>
+  </form>
+</div>
 
-    <label>Поточне зображення:</label><br>
-    <img id="currentImage" src="/uploads/products/no-image.jpg" alt="Поточне зображення" width="150">
+<!-- Форма видалення категорії -->
+<div id="selectCategoryToDelete" class="form" style="display: none;">
+  <h3>Оберіть категорію</h3>
+  <select id="deleteCategorySelect" required></select>
+  <button id="loadCategoryToDeleteBtn" type="button">Вибрати</button>
+</div>
 
-    <label>Категорія (поточна): <span id="currentCategoryName"></span></label>
-
-    <label>Підкатегорія (поточна): <span id="currentSubcategoryName"></span></label>
-    
-    <label>Кількість (поточна): <span id="currentQuantity"></span></label>
-
-    <label>Опис (поточний): <span id="currentDescription"></span></label>
-
-    <button type="submit">Видалити товар</button>
+<div id="deleteCategoryConfirmForm" class="form" style="display: none;">
+  <h3>Підтвердження видалення</h3>
+  <form id="deleteCategoryConfirmFormElement">
+    <input type="hidden" id="deleteCategoryId">
+    <p><strong>Назва категорії:</strong> <span id="deleteCategoryName"></span></p>
+    <button type="submit">Видалити</button>
   </form>
 </div>
 
@@ -320,10 +451,11 @@ document.querySelectorAll('.sidebar-btn').forEach(button => {
 });
 
 // URL для запитів
-// locoal const API_BASE = 'http://localhost:3000';
-const API_BASE = 'https://diplom-plumbering-shop.onrender.com';
+// local 
+const API_BASE = 'http://localhost:3000';
+// const API_BASE = 'https://diplom-plumbering-shop.onrender.com';
     
-  // Авторизація
+// Авторизація
 document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
@@ -354,15 +486,15 @@ document.getElementById('adminLoginForm').addEventListener('submit', async funct
 
 // Після завантаження сторінки
 document.addEventListener('DOMContentLoaded', () => {
-  loadCategories('category');
   loadCategories('editCategoryItem');
-  loadSubcategories('category', 'subcategory');
   loadSubcategories('editCategoryItem', 'editSubcategoryItem');
   loadCategories('editSubcategoryCategorySelect');
   loadCategories('editSubcategoryCategoryNameInForm');
   loadCategories('subcategoryCategory');
   loadItemsForEdit();
+  loadItemsForDelete();
 });
+  
 
 // Приховує всі форми з класом .form і показує лише одну
 function showForm(formId) {
@@ -388,7 +520,7 @@ function hideAllModes() {
 // Показати форми для Додавання
 function showAddOptions() {
   hideAllModes();
-  showForm(); // ховає всі форми
+  showForm();
   document.getElementById('addOptions').style.display = 'block';
 }
 function showAddProductForm() {
@@ -404,10 +536,10 @@ function showAddSubcategoryForm() {
 // Завантаження категорій
 function loadCategories(selectId, selectCategoryId = null) {
   const select = document.getElementById(selectId);
-    if (!select) {
-      console.error(`Елемент із id "${selectId}" не знайдено`);
-      return;
-    }
+  if (!select) {
+    console.error(`Елемент із id "${selectId}" не знайдено`);
+    return;
+  }
 
   fetch(`${API_BASE}/api/categories`)
     .then(res => {
@@ -415,27 +547,24 @@ function loadCategories(selectId, selectCategoryId = null) {
       return res.json();
     })
     .then(data => {
-      console.log('Категорії з API:', data); // видилити потім
-      const select = document.getElementById(selectId);
-
       select.innerHTML = '<option value="">Оберіть категорію</option>';
-      
+
       if (!Array.isArray(data)) {
-        console.error('Очікувався масив, але отримав: ', data);
+        console.error('Очікувався масив, але отримано:', data);
         return;
       }
-      
+
       data.forEach(cat => {
         const option = document.createElement('option');
         option.value = cat.category_id || cat.id;
-        option.textContent = cat.category_name || cat.name;  
-        
-        if (selectCategoryId && String(option.value) == String(selectCategoryId)){
+        option.textContent = cat.category_name || cat.name;
+
+        if (selectCategoryId && String(option.value) === String(selectCategoryId)) {
           option.selected = true;
         }
         select.appendChild(option);
-        });
-      }) 
+      });
+    })
     .catch(err => console.error('Помилка при завантаженні категорій:', err));
 }
 
@@ -445,32 +574,27 @@ function loadSubcategories(categorySelectId, subcategorySelectId) {
   const subSelect = document.getElementById(subcategorySelectId);
 
   if (!catSelect || !subSelect) {
-    console.error(`Один з елементів не знайдено: catSelect = ${catSelect}, subSelect = ${subSelect}`);
+    console.error(`Елемент не знайдено: ${categorySelectId} або ${subcategorySelectId}`);
     return;
   }
 
-  catSelect.addEventListener('change', () => {
+  const updateSubcategories = () => {
     const categoryId = catSelect.value;
+    subSelect.innerHTML = '<option value="">Оберіть підкатегорію</option>';
 
-    if(!categoryId || categoryId === ""){
+    if (!categoryId) {
       console.warn('Категорія не вибрана');
       return;
     }
 
-    console.log('Отримано value категорії:', categoryId);
-    subSelect.innerHTML = '<option value="">Оберіть підкатегорію</option>';
-
-    fetch(`${API_BASE}/api/subcategories/${categoryId}`) // /api/categories/:categoryId/subcategories
-      .then(res => res.json())
+    fetch(`${API_BASE}/api/subcategories/${categoryId}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Не вдалося завантажити підкатегорії');
+        return res.json();
+      })
       .then(data => {
-        console.log('Отримано підкатегорії:', data);
-        if (data.error) {
-          console.warn('Сервер повернув помилку:', data.error);
-          return;
-        }
-
         if (!Array.isArray(data)) {
-          console.error('Помилка: очікувався масив, але прийшло:', data);
+          console.error('Очікувався масив, але отримано:', data);
           return;
         }
 
@@ -480,12 +604,22 @@ function loadSubcategories(categorySelectId, subcategorySelectId) {
           option.textContent = sub.subcategory_name || sub.name;
           subSelect.appendChild(option);
         });
+        subSelect.disabled = false;
       })
-      .catch(error => {
-          console.error('Помилка при отриманні підкатегорій:', error);
-      });
-  });
+      .catch(err => console.error('Помилка при отриманні підкатегорій:', err));
+  };
+
+  if (!catSelect._hasChangeListener) {
+    catSelect.addEventListener('change', updateSubcategories);
+    catSelect._hasChangeListener = true; 
+  }
+
+  if (catSelect.value) {
+    updateSubcategories();
+  }
 }
+
+
 
 // Додавання товару
   document.getElementById('addProductForm').addEventListener('submit', function (e) {
@@ -553,8 +687,8 @@ function loadSubcategories(categorySelectId, subcategorySelectId) {
     });
 });
 
-    // Додавання катeгорії 
-    document.getElementById('addCategoryForm').addEventListener('submit', function (e) {
+  // Додавання катeгорії 
+  document.getElementById('addCategoryForm').addEventListener('submit', function (e) {
   e.preventDefault();
 
   const data = {
@@ -580,7 +714,7 @@ function loadSubcategories(categorySelectId, subcategorySelectId) {
 
 // РЕДАГУВАННЯ 
 // Показати вибір дій для редагування
- function showEditOptions() {
+function showEditOptions() {
   hideAllModes();
   showForm(); 
   document.getElementById('editOptions').style.display = 'block';
@@ -712,10 +846,10 @@ document.getElementById('editItemFormElement').addEventListener('submit', functi
       let data;
 
       try {
-        data = JSON.parse(text);
+        data = JSON.parse(content);
       } 
       catch(e) {
-      alert('Відповідь не є JSON: ' + err.message);
+      alert('Відповідь не є JSON: ' + e.message);
       throw new Error('Неправильний JSON')
     }
 
@@ -864,51 +998,189 @@ document.getElementById('editCategoryFormElement').addEventListener('submit', fu
 
 // ВИДАЛЕННЯ
 // Показати форму 
- function showDeleteOptions() {
+function showDeleteOptions() {
   hideAllModes();
   document.getElementById('deleteOptions').style.display = 'block';
   showForm();
 }
-    function showDeleteProductForm() {
+function showDeleteProductForm() {
   showForm('selectItemToDelete');
 }
-    function showDeleteCategoryForm() {
+function showDeleteCategoryForm() {
   showForm('selectCategoryToDelete');
 }
-    function showDeleteSubcategoryForm() {
+function showDeleteSubcategoryForm() {
   showForm('selectSubcategoryToDelete');
 }
 
 // Видалення товару
+function loadItemsForDelete() {
+  fetch(`${API_BASE}/api/products`)
+    .then(res => res.json())
+    .then(data => {
+      const select = document.getElementById('deleteItemSelect');
+      select.innerHTML = '<option value="">-- Виберіть товар --</option>';
+
+      if (Array.isArray(data)) {
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.product_id;
+          option.textContent = item.name;
+          select.appendChild(option);
+        });
+      } else {
+        console.error('Очікував масив, але отримав:', data);
+      }
+    })
+    .catch(err => console.error('Помилка при завантаженні товарів для видалення:', err));
+}
+
+document.getElementById('loadItemToDeleteBtn').addEventListener('click', function () {
+  const select = document.getElementById('deleteItemSelect');
+  const itemId = select.value;
+  console.log('Вибраний товар ID:', itemId);
+  if (!itemId) return alert('Оберіть товар');
+  
+  fetch(`${API_BASE}/api/products/${itemId}`)
+    .then(res => res.json())
+    .then(item => {
+      if (!item || !item.product_id) {
+       alert('Не вдалося завантажити товар');
+       return;
+      }
+
+      document.getElementById('deleteItemId').value = item.product_id;
+      document.getElementById('deleteItemName').textContent = item.name;
+      document.getElementById('deleteItemPrice').textContent = item.price;
+      document.getElementById('deleteItemCategory').textContent = item.category_name;
+      document.getElementById('deleteItemSubcategory').textContent = item.subcategory_name;
+      document.getElementById('deleteItemStock').textContent = item.stock;
+      document.getElementById('deleteItemDescription').textContent = item.description;
+      document.getElementById('deleteItemImage').src = `${API_BASE}/uploads/products/${item.image || 'no-image.jpg'}`;
+
+      showForm('deleteItemForm');
+    });
+});
+
 document.getElementById('deleteItemFormElement').addEventListener('submit', function (e) {
   e.preventDefault();
+  const id = document.getElementById('deleteItemId').value;
+  console.log('ID, який відправляється на видалення:', id);
   
-  const itemId = document.getElementById('itemId').value;
-  const categoryId = document.getElementById('categoryId').value;
-  const subcategoryId = document.getElementById('subcategoryId').value;
-  const stock = document.getElementById('stock').value;
-  const price = document.getElementById('price').value;
+  if(!id){
+    alert('id товару відсутній. Оберіть товар');
+    return;
+  }
 
-  const imgEl = document.getElementById('currentImage');
-    if (imgEl) {
-      imgEl.src = item.image && item.image.trim() !== '' ? item.image : '/uploads/products/no-image.jpg';
-    }
-
-  fetch(`${API_BASE}/api/products/${id}`, {
-    method: 'DELETE'
-  })
+  fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' })
     .then(res => {
-      if(!res.ok) throw new Error('Помилка при видалені товару');
+      if (!res.ok) throw new Error('Помилка при видаленні товару');
       return res.json();
     })
     .then(result => {
       alert(result.message || 'Товар видалено');
-      document.getElementById('deleteItem').reset();
+      loadItems('deleteItemSelect');
+      showForm('selectItemToDelete');
+    })
+    .catch(err => alert('Не вдалося видалити товар'));
+});
+
+// Видалення підкатегорії
+function showDeleteSubcategorySelection() {
+  showForm('selectSubcategoryToDelete');
+  initDeleteSubcategoryForm();
+}
+// Підвантажити категорії та підкатегорії для видалення
+function initDeleteSubcategoryForm() {
+  loadCategories('deleteCategorySelect');
+  loadSubcategories('deleteCategorySelect', 'deleteSubcategorySelect');
+  
+  document.getElementById('deleteSubcategorySelect').disabled = true;
+}
+
+document.getElementById('loadSubcategoryToDeleteBtn').addEventListener('click', () => {
+  const catSelect = document.getElementById('deleteCategorySelect');
+  const subSelect = document.getElementById('deleteSubcategorySelect');
+  
+  if (!catSelect.value) return alert('Оберіть категорію');
+  if (!subSelect.value) return alert('Оберіть підкатегорію');
+  
+   fetch(`${API_BASE}/api/subcategories/${catSelect.value}`)
+    .then(res => {
+      if (!res.ok) throw new Error(`Статус відповіді: ${res.status}`);
+      return res.json();
+    })
+    .then(subcategories => {
+      const sub = subcategories.find(s => s.id == subSelect.value);
+      if (!sub) {
+        alert('Не вдалося знайти підкатегорію');
+        return;
+      }
+
+      document.getElementById('deleteSubcategoryId').value = sub.id;
+      document.getElementById('deleteSubcategoryName').textContent = sub.subcategory_name || sub.name;
+      document.getElementById('deleteSubcategoryCategoryName').textContent = catSelect.options[catSelect.selectedIndex].text;
+
+      showForm('deleteSubcategoryForm');
     })
     .catch(err => {
-      console.error(err);
-      alert('Не вдалося видалити товар.');
-    }); 
+      console.error('Помилка при завантаженні підкатегорії:', err);
+      alert('Не вдалося завантажити інформацію про підкатегорію');
+    });
+});
+
+document.getElementById('deleteSubcategoryFormElement').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const id = document.getElementById('deleteSubcategoryId').value;
+  if (!id) return alert('Обрати підкатегорію для видалення');
+
+  fetch(`${API_BASE}/api/subcategories/${id}`, { method: 'DELETE' })
+    .then(res => {
+      if (!res.ok) throw new Error('Помилка при видаленні підкатегорії');
+      return res.json();
+    })
+    .then(result => {
+      alert(result.message || 'Підкатегорію видалено');
+
+      initDeleteSubcategoryForm();
+
+      showForm('selectSubcategoryToDelete');
+    })
+    .catch(err => {
+      console.error('Помилка при видаленні підкатегорії:', err);
+      alert('Не вдалося видалити підкатегорію');
+    });
+});
+
+
+// Видалення категорії
+// Після натискання "Вибрати"
+document.getElementById('loadCategoryToDeleteBtn').addEventListener('click', function () {
+  const select = document.getElementById('deleteCategorySelect');
+  const id = select.value;
+  const name = select.options[select.selectedIndex]?.textContent;
+
+  if (!id) return alert('Оберіть категорію');
+
+  document.getElementById('deleteCategoryId').value = id;
+  document.getElementById('deleteCategoryName').textContent = name;
+
+  showForm('deleteCategoryConfirmForm');
+});
+
+document.getElementById('deleteCategoryConfirmFormElement').addEventListener('submit', function (e) {
+  e.preventDefault();
+  const id = document.getElementById('deleteCategoryId').value;
+
+  fetch(`${API_BASE}/api/categories/${id}`, { method: 'DELETE' })
+    .then(res => res.json())
+    .then(result => {
+      alert(result.message || 'Категорію видалено');
+      loadCategories('deleteCategorySelect');
+      showForm('selectCategoryToDelete');
+    })
+    .catch(err => alert('Не вдалося видалити категорію'));
 });
 
 //Видалення невикористовуваних зображень
