@@ -164,7 +164,7 @@
   <script>
     // local const API_BASE = 'http://localhost:3000/api';
     const API_BASE = 'https://diplom-plumbering-shop.onrender.com';
-    
+
     let cartId = localStorage.getItem('cartId');
 
     async function fetchCart() {
@@ -174,7 +174,7 @@
       }
 
       try {
-        const res = await fetch(`${API_BASE}/cart/${cartId}`);
+        const res = await fetch(`${API_BASE}/api/cart/${cartId}`);
         const items = await res.json();
 
         displayCart(items);
@@ -239,7 +239,7 @@
 
     async function updateCartItemQuantity(productId, change) {
       try {
-        await fetch(`${API_BASE}/cart/update`, {
+        await fetch(`${API_BASE}/api/cart/update`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ cartId, productId, change })
@@ -251,7 +251,7 @@
 
     async function removeCartItem(productId) {
       try {
-        await fetch(`${API_BASE}/cart/remove`, {
+        await fetch(`${API_BASE}/api/cart/remove`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ cartId, productId })
@@ -265,7 +265,7 @@
       if (!cartId) return;
 
       try {
-        await fetch(`${API_BASE}/cart/clear`, {
+        await fetch(`${API_BASE}/api/cart/clear`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ cartId })

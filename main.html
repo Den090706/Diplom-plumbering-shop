@@ -324,7 +324,7 @@
       container.innerHTML = '';
 
       try {
-        const res = await fetch(`${API_BASE}/subcategories/${category.category_id}`);
+        const res = await fetch(`${API_BASE}/api/subcategories/${category.category_id}`);
         const subcategories = await res.json();
 
         if (!Array.isArray(subcategories)) {
@@ -346,7 +346,7 @@
 
     async function loadProductsBySubcategory(subcategoryId) {
       try {
-        const res = await fetch(`${API_BASE}/products/subcategory/${subcategoryId}`);
+        const res = await fetch(`${API_BASE}/api/products/subcategory/${subcategoryId}`);
         const products = await res.json();
 
         const container = document.getElementById('product-container');
@@ -398,7 +398,7 @@
       }
 
       try {
-        const response = await fetch(`${API_BASE}/cart/add`, {
+        const response = await fetch(`${API_BASE}/api/cart/add`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

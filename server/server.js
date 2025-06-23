@@ -104,13 +104,13 @@ app.use(session({
 // МІДЛВАР ДЛЯ ЗАХИСТУ ДОСТУПУ 
 function authMiddleware(req, res, next) {
   if (!req.session.userId) {
-    return res.redirect('/login.html');
+    return res.redirect('/api/login.html');
   }
   next();
 }
 
 // Реєстрація користувача
-app.post('/register', async (req, res) => {
+app.post('/api/register', async (req, res) => {
   const { name, email, password } = req.body;
 
   const hash = await bcrypt.hash(password, 10);
@@ -128,7 +128,7 @@ app.post('/register', async (req, res) => {
 });
 
 // Вхід користувача
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
 
   const user = await queryAsync('SELECT * FROM users WHERE email = ?', [email]);
@@ -167,7 +167,7 @@ app.post('/login', async (req, res) => {
 });
 
 // Перевірка статусу авторизації
-app.get('/check-auth', (req, res) => {
+app.get('/api/check-auth', (req, res) => {
   if (req.session && req.session.userId) {
     res.json({ loggedIn: true, userName: req.session.userName });
   } else {
@@ -176,22 +176,14 @@ app.get('/check-auth', (req, res) => {
 });
 
 // Вихід користувача
-app.get('/logout', (req, res) => {
+app.get('/api/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
       return res.status(500).send('Помилка при виході');
     }
-    res.redirect('/login.html');
+    res.redirect('/api/login.html');
   });
 });
-
-/*
-//  ЗАХИСТ СТОРІНОК 
-// Доступ до головної сторінки лише для авторизованих користувачів
-app.get('/main.html', authMiddleware, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'main.html'));
-});
-*/
 
 // Зобраеження з теки 'diplom' 
 app.use(express.static(path.join(__dirname, '..')));
