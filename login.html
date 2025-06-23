@@ -127,7 +127,7 @@
   </form>
 
   <!-- Форма реєстрації -->
-  <form id="registerForm" method="POST" action="/register" style="display:none;">
+  <form id="registerForm" method="POST" action="/api/register" style="display:none;">
     <h3>Реєстрація</h3>
     <label>Ім’я:</label><br>
     <input type="text" name="name" required><br>
@@ -179,7 +179,7 @@
     const password = document.getElementById('loginPassword').value;
 
     try {
-      const res = await fetch('/login', {
+      const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

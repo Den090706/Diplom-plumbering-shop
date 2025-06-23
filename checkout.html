@@ -98,7 +98,7 @@
             };
 
             try {
-                const res = await fetch(`${API_BASE}/orders/create`, {
+                const res = await fetch(`${API_BASE}/api/orders/create`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(order)
@@ -110,7 +110,7 @@
                     alert(`Замовлення оформлено! Номер замовлення: ${data.orderId}`);
                     localStorage.removeItem('cart');
                     window.location.href = 'main.html';
-                    await fetch(`${API_BASE}/cart/clear`, {
+                    await fetch(`${API_BASE}/api/cart/clear`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ cartId: localStorage.getItem('cartId') })
