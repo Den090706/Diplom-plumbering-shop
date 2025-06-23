@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Оформлення замовлення</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 2rem;
+        }
+
+        form input,
+        form textarea {
+            width: 100%;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Оформлення замовлення</h2>
+    <form id="orderForm">
+        <label>Ім’я та прізвище:</label>
+        <input type="text" name="name" required>
+
+        <label>Email:</label>
+        <input type="email" name="email" required>
+
+        <label>Телефон:</label>
+        <input type="tel" name="phone" required>
+
+        <label>Адреса доставки:</label>
+        <textarea name="address" required></textarea>
+
+        <label>Коментар (необов’язково):</label>
+        <textarea name="comment"></textarea>
+
+        <button type="submit" class="btn btn-primary">Підтвердити замовлення</button>
+    </form>
+
+    <script>
+        // local const API_BASE = 'http://localhost:3000/api';
+        const API_BASE = 'https://diplom-plumbering-shop.onrender.com';
+
+        const cartId = localStorage.getItem('cartId');
+
+        window.addEventListener('DOMContentLoaded', loadCartToLocal);
+
+        async function loadCartToLocal() {
+            if (!cartId) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/cart/${cartId}`);
+                const items = await res.json();
+
+                if (Array.isArray(items) && items.length > 0) {
+                    const simplified = items.map(item => ({
+                        product_id: item.product_id,
+                        name: item.name,
+                        price: item.price,
+                        stock: item.quantity
+                    }));
+
+                    localStorage.setItem('cart', JSON.stringify(simplified));
+                }
+            } catch (err) {
+                console.error('Помилка при завантаженні кошика:', err);
+            }
+        }
+
+        function calculateTotal(items) {
+            return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        }
+
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            if (!cart.length) {
+                alert('Кошик порожній.');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const order = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                address: formData.get('address'),
+                comment: formData.get('comment'),
+                items: cart
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/orders/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(order)
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert(`Замовлення оформлено! Номер замовлення: ${data.orderId}`);
+                    localStorage.removeItem('cart');
+                    window.location.href = 'main.html';
+                    await fetch(`${API_BASE}/cart/clear`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ cartId: localStorage.getItem('cartId') })
+                    });
+                } else {
+                    alert('Не вдалося оформити замовлення.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Помилка під час оформлення.');
+            }
+        });
+    </script>
+</body>
+
+</html>

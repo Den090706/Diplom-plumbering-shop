@@ -22,10 +22,10 @@ if (!fs.existsSync(uploadDir)) {
 // Сховище для зображень
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-  const uploadPath = path.join(__dirname, 'uploads/products');
-  console.log('Завантаження у папку:', uploadPath);
-  cb(null, path.join(__dirname, 'uploads/products'));
-},
+    const uploadPath = path.join(__dirname, 'uploads/products');
+    console.log('Завантаження у папку:', uploadPath);
+    cb(null, path.join(__dirname, 'uploads/products'));
+  },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname);
     const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9) + ext;
@@ -74,10 +74,10 @@ app.use(express.urlencoded({ extended: true }));
 */
 
 const db = mysql.createConnection({
-  host: 'localhost',       
-  user: 'root',            
-  password: '5555',   
-  database: 'plumber_shop' 
+  host: 'localhost',
+  user: 'root',
+  password: '5555',
+  database: 'plumber_shop'
 });
 
 
@@ -200,24 +200,24 @@ app.use(express.static(path.join(__dirname, '..')));
 const filesInFolder = fs.readdirSync(uploadDir);
 
 // Отримуємо зображення з БД
-function cleanUnusedImages(){
+function cleanUnusedImages() {
   const uploadDir = path.join(__dirname, 'uploads/products');
   const filesInFolder = fs.readdirSync(uploadDir);
 
-db.query('SELECT image FROM products WHERE image IS NOT NULL', (err, results) => {
-  if (err) throw err;
+  db.query('SELECT image FROM products WHERE image IS NOT NULL', (err, results) => {
+    if (err) throw err;
 
-  const usedImages = results.map(row => path.basename(row.image));
-  const unusedImages = filesInFolder.filter(file => !usedImages.includes(file));
+    const usedImages = results.map(row => path.basename(row.image));
+    const unusedImages = filesInFolder.filter(file => !usedImages.includes(file));
 
-  unusedImages.forEach(file => {
-    const filePath = path.join(uploadDir, file);
-    if(simulate){
-      console.log('[SIMULATION] Буде видалено:', file);
-    } else{
-    fs.unlinkSync(filePath, err =>{
-      if (err) console.warn('Не вдалося видалити файл: ', filePath);
-      console.log('Видалено:', file);
+    unusedImages.forEach(file => {
+      const filePath = path.join(uploadDir, file);
+      if (simulate) {
+        console.log('[SIMULATION] Буде видалено:', file);
+      } else {
+        fs.unlinkSync(filePath, err => {
+          if (err) console.warn('Не вдалося видалити файл: ', filePath);
+          console.log('Видалено:', file);
         });
       }
     });
@@ -226,7 +226,7 @@ db.query('SELECT image FROM products WHERE image IS NOT NULL', (err, results) =>
 
 //Запуск очищення
 app.delete('/api/images/cleanup', (req, res) => {
-  cleanUnusedImages(false); 
+  cleanUnusedImages(false);
   res.json({ message: 'Очищення запущено (перевір логи сервера)' });
 });
 
@@ -269,13 +269,13 @@ app.get('/api/categories/:id', (req, res) => {
 
   const query = 'SELECT * FROM categories WHERE category_id = ?';
   db.query(query, [categoryId], (err, results) => {
-    if(err){
+    if (err) {
       console.log('Помилка отримання категорії: ', err);
-      return res.status(500).json({error: 'Помилка сервера'});
+      return res.status(500).json({ error: 'Помилка сервера' });
     }
-  
-    if (results.length === 0){
-      return res.status(404).json({error: 'Категорію не знайдено'});
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Категорію не знайдено' });
     }
     res.json(results[0]);
   });
@@ -455,6 +455,60 @@ app.post('/api/cart/add', async (req, res) => {
   }
 });
 
+//ЗАМОВЛЕННЯ
+//Оформлення замовлення
+app.post('/api/orders/create', async (req, res) => {
+  try {
+    const { items } = req.body;
+
+    console.log('ITEMS:', items);
+    console.log('TOTAL:', calculateTotal(items));
+    console.log('ORDER DATA:', req.body);
+
+
+    //const cartId = req.body.cartId;
+
+    if (!items || items.length === 0) {
+      return res.status(400).json({ success: false, message: 'Кошик порожній' });
+    }
+
+    const result = await queryAsync(
+      'INSERT INTO orders (user_id, order_date, total_price, status) VALUES (?, NOW(), ?, ?)',
+      [1, calculateTotal(items), 'new']
+    );
+    const orderId = result.insertId;
+
+    for (const item of items) {
+      if (!item.product_id || !item.stock || !item.price) {
+        return res.status(400).json({ success: false, message: 'Невірні дані товару' });
+      }
+
+      await queryAsync(
+        'INSERT INTO order_items (order_id, product_id, stock, unit_price) VALUES (?, ?, ?, ?)',
+        [orderId, item.product_id, item.stock, item.price]
+      );
+    }
+
+    res.json({ success: true, orderId });
+  } catch (err) {
+    console.error('Помилка при створенні замовлення:', err);
+    res.status(500).json({ success: false, message: 'Внутрішня помилка сервера' });
+  }
+});
+
+function calculateTotal(items) {
+  return items.reduce((sum, item) => {
+    const price = Number(item.price);
+    const stock = Number(item.stock);
+
+    if (isNaN(price) || isNaN(stock)) {
+      throw new Error(`Некоректні дані у товарі: price=${item.price}, quantity=${item.stock}`);
+    }
+
+    return sum + price * stock;
+  }, 0);
+}
+
 //Отримати вміст кошика
 app.get('/api/cart/:cartId', async (req, res) => {
   const { cartId } = req.params;
@@ -556,7 +610,7 @@ app.post('/api/products', upload.single('image'), (req, res) => {
   const { name, category_id, subcategory_id, description, price, stock } = req.body;
   const imagePath = req.file ? '/uploads/products/' + req.file.filename : null;
 
-  if (!name || !category_id || !description || !price || !stock ) {
+  if (!name || !category_id || !description || !price || !stock) {
     return res.status(400).json({ error: 'Усі поля повинні бути заповнені' });
   }
 
@@ -583,7 +637,7 @@ app.put('/api/products/:id', upload.single('image'), (req, res) => {
   const productId = req.params.id;
   const { name, category_id, subcategory_id, description, price, stock } = req.body;
 
-  if (!name || !category_id || !subcategory_id || !description  || !stock || !price ) {
+  if (!name || !category_id || !subcategory_id || !description || !stock || !price) {
     return res.status(400).json({ error: 'Усі поля повинні бути заповнені' });
   }
 
@@ -668,7 +722,7 @@ app.delete('/api/products/:id', (req, res) => {
 // Маршрути для додавання, оновлення, видалення підкатегорій
 // Додавання підкатегорії
 app.post('/api/subcategories', (req, res) => {
-  const {name, category_id } = req.body;
+  const { name, category_id } = req.body;
 
   if (!name || !category_id) {
     return res.status(400).json({ error: 'Поле повинне бути заповненим' });
@@ -695,7 +749,7 @@ app.post('/api/subcategories', (req, res) => {
 // Оновлення підкатегорії
 app.put('/api/subcategories/:id', (req, res) => {
   const productId = req.params.id;
-  const { name, category_id} = req.body;
+  const { name, category_id } = req.body;
 
   if (!name || !category_id) {
     return res.status(400).json({ error: 'Усі поля повинні бути заповнені' });

@@ -1,202 +1,208 @@
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
   <title>Корзина</title>
-<style> 
-.layout{
-  display: flex;
-  flex-direction: column;
-}
+  <style>
+    .layout {
+      display: flex;
+      flex-direction: column;
+    }
 
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #f0f4f8;
-  font-family: Arial, sans-serif;
-}
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f4f8;
+      font-family: Arial, sans-serif;
+    }
 
-.name-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 14px 20px;
-  background-color: #37ddf3;
-  box-sizing: border-box;
-  border-bottom: 2px solid #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+    .name-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 14px 20px;
+      background-color: #37ddf3;
+      box-sizing: border-box;
+      border-bottom: 2px solid #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-.shop-name {
-  font-size: 20px;
-  color: black;
-  font-weight: bold;
-  user-select: none;
-}
+    .shop-name {
+      font-size: 20px;
+      color: black;
+      font-weight: bold;
+      user-select: none;
+    }
 
-.auth-buttons {
-  display: flex;
-  gap: 10px;
-}
+    .auth-buttons {
+      display: flex;
+      gap: 10px;
+    }
 
-.auth-buttons a {
-  text-decoration: none;
-  padding: 10px 15px;
-  background-color: #82a7b1;
-  color: black;
-  border-radius: 5px;
-  transition: background-color 0.3s, box-shadow 0.3s;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+    .auth-buttons a {
+      text-decoration: none;
+      padding: 10px 15px;
+      background-color: #82a7b1;
+      color: black;
+      border-radius: 5px;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-.auth-buttons a:hover {
-  background-color: #2ac1d5;
-  box-shadow: 0 4px 10px rgba(42, 193, 213, 0.6);
-}
+    .auth-buttons a:hover {
+      background-color: #2ac1d5;
+      box-shadow: 0 4px 10px rgba(42, 193, 213, 0.6);
+    }
 
-.topnav {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  width: 100%;
-  padding: 14px 20px;
-  background: linear-gradient(90deg, #5a64f5, #3a44e1);
-  border: none;
-  font-weight: bold;
-  transition: background-color 0.3s;
-  box-shadow: inset 0 -3px 5px rgba(0,0,0,0.1);
-}
+    .topnav {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      width: 100%;
+      padding: 14px 20px;
+      background: linear-gradient(90deg, #5a64f5, #3a44e1);
+      border: none;
+      font-weight: bold;
+      transition: background-color 0.3s;
+      box-shadow: inset 0 -3px 5px rgba(0, 0, 0, 0.1);
+    }
 
-.topnav a {
-  color: white;
-  text-decoration: none;
-  display: inline-block;
-  padding: 14px 20px;
-  font-weight: bold;
-  transition: background-color 0.3s, color 0.3s;
-  border-radius: 4px;
-  margin-left: 0px;
-}
+    .topnav a {
+      color: white;
+      text-decoration: none;
+      display: inline-block;
+      padding: 14px 20px;
+      font-weight: bold;
+      transition: background-color 0.3s, color 0.3s;
+      border-radius: 4px;
+      margin-left: 0px;
+    }
 
-.topnav a:hover {
-  background-color: #2ac1d5;
-  color: black;
-  box-shadow: 0 2px 8px rgba(42, 193, 213, 0.7);
-}
+    .topnav a:hover {
+      background-color: #2ac1d5;
+      color: black;
+      box-shadow: 0 2px 8px rgba(42, 193, 213, 0.7);
+    }
 
-.main-content{
-  display: flex;
-  margin-top: 0;
-}
+    .main-content {
+      display: flex;
+      margin-top: 0;
+    }
 
-#cart-items {
-  padding: 1rem;
-  margin: 1rem;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-  max-width: 600px;
-}
+    #cart-items {
+      padding: 1rem;
+      margin: 1rem;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+    }
 
-.cart-item {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #ccc;
-  font-size: 16px;
-}
+    .cart-item {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #ccc;
+      font-size: 16px;
+    }
 
-#product-container{
-display: flex;
-flex-wrap: wrap;
-gap: 1rem;
-}
+    #product-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
 
-.content-area{
- flex: 1;
- padding: 1rem;
- display: flex;
- flex-direction: column;
- gap: 1rem;
-}
+    .content-area {
+      flex: 1;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
 
-.product-card {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 1rem;
-  width: 250px;
-  background-color: #f9f9f9;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
-}
+    .product-card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 1rem;
+      width: 250px;
+      background-color: #f9f9f9;
+      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
 
-.product-card:hover {
-  transform: scale(1.03);
-}
-</style>
+    .product-card:hover {
+      transform: scale(1.03);
+    }
+  </style>
 </head>
-<body> 
-<div class="name-bar">
-  <div class="shop-name">Plumbering shop</div>
-  <div class="auth-buttons" id="authButtons">
-    <a href="login.html" id="loginBtn">Увійти</a>
-    <a href="/logout" id="logoutBtn" style="display:none;">Вийти</a>
+
+<body>
+  <div class="name-bar">
+    <div class="shop-name">Plumbering shop</div>
+    <div class="auth-buttons" id="authButtons">
+      <a href="login.html" id="loginBtn">Увійти</a>
+      <a href="/logout" id="logoutBtn" style="display:none;">Вийти</a>
+    </div>
   </div>
-</div>
 
-<nav class="topnav">
-  <a href="main.html">Головна</a>
-  <a href="aboutUs.html">Про нас</a>
-  <a href="admin.html">Адміністратор</a>
-</nav>
+  <nav class="topnav">
+    <a href="main.html">Головна</a>
+    <a href="aboutUs.html">Про нас</a>
+    <a href="admin.html">Адміністратор</a>
+  </nav>
 
-<div class="cart-container">
-  <h2>Ваш кошик</h2>
-  <div id="cart-items"></div>
-  <p id="cart-total"></p>
-  <button id="checkoutBtn" class="btn btn-success">Оформити замовлення</button>
-  <button id="clearCartBtn" class="btn btn-danger" style="margin-top:1rem;">Очистити кошик</button>
-</div>
+  <div class="cart-container">
+    <h2>Ваш кошик</h2>
+    <div id="cart-items"></div>
+    <p id="cart-total"></p>
+    <button id="checkoutBtn" class="btn btn-success">Оформити замовлення</button>
+    <button id="clearCartBtn" class="btn btn-danger" style="margin-top:1rem;">Очистити кошик</button>
+  </div>
 
-<script>
-  const API_BASE = 'http://localhost:3000/api'; 
-  let cartId = localStorage.getItem('cartId');
+  <script>
+    // local const API_BASE = 'http://localhost:3000/api';
+    const API_BASE = 'https://diplom-plumbering-shop.onrender.com';
+    
+    let cartId = localStorage.getItem('cartId');
 
-async function fetchCart() {
-    if (!cartId) {
-      document.getElementById('cart-items').textContent = 'Кошик не знайдено. Будь ласка, увійдіть.';
-      return;
+    async function fetchCart() {
+      if (!cartId) {
+        document.getElementById('cart-items').textContent = 'Кошик не знайдено. Будь ласка, увійдіть.';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/cart/${cartId}`);
+        const items = await res.json();
+
+        displayCart(items);
+      } catch (err) {
+        console.error('Помилка завантаження кошика:', err);
+        document.getElementById('cart-items').textContent = 'Помилка при завантаженні кошика.';
+      }
     }
 
-    try {
-      const res = await fetch(`${API_BASE}/cart/${cartId}`);
-      const items = await res.json();
+    function displayCart(items) {
+      const container = document.getElementById('cart-items');
+      container.innerHTML = '';
 
-      displayCart(items);
-    } catch (err) {
-      console.error('Помилка завантаження кошика:', err);
-      document.getElementById('cart-items').textContent = 'Помилка при завантаженні кошика.';
-    }
-  }
+      if (!items || items.length === 0) {
+        container.textContent = 'Кошик порожній.';
+        document.getElementById('cart-total').textContent = '';
+        return;
+      }
 
-function displayCart(items) {
-    const container = document.getElementById('cart-items');
-    container.innerHTML = '';
+      let total = 0;
 
-    if (!items || items.length === 0) {
-      container.textContent = 'Кошик порожній.';
-      document.getElementById('cart-total').textContent = '';
-      return;
-    }
+      items.forEach(item => {
+        total += item.price * item.quantity;
 
-    let total = 0;
-
-    items.forEach(item => {
-      total += item.price * item.quantity;
-
-      const row = document.createElement('div');
-      row.className = 'cart-item';
-      row.style.marginBottom = '1rem';
-      row.innerHTML = `
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        row.style.marginBottom = '1rem';
+        row.innerHTML = `
         <strong>${item.name}</strong><br>
         Ціна: ${item.price} грн<br>
         Кількість: 
@@ -206,81 +212,82 @@ function displayCart(items) {
         Сума: ${item.price * item.quantity} грн
         <button class="remove-btn btn btn-sm btn-danger" data-id="${item.product_id}" style="margin-left: 1rem;">Видалити</button>
       `;
-      container.appendChild(row);
-    });
+        container.appendChild(row);
+      });
 
-document.getElementById('cart-total').textContent = `Загалом: ${total} грн`;
+      document.getElementById('cart-total').textContent = `Загалом: ${total} грн`;
 
-    container.querySelectorAll('.qty-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const productId = btn.dataset.id;
-        const change = parseInt(btn.dataset.change);
+      container.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const productId = btn.dataset.id;
+          const change = parseInt(btn.dataset.change);
 
-        await updateCartItemQuantity(productId, change);
+          await updateCartItemQuantity(productId, change);
+          fetchCart();
+        });
+      });
+
+      container.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const productId = btn.dataset.id;
+
+          await removeCartItem(productId);
+          fetchCart();
+        });
+      });
+    }
+
+    async function updateCartItemQuantity(productId, change) {
+      try {
+        await fetch(`${API_BASE}/cart/update`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartId, productId, change })
+        });
+      } catch (err) {
+        console.error('Помилка оновлення кількості:', err);
+      }
+    }
+
+    async function removeCartItem(productId) {
+      try {
+        await fetch(`${API_BASE}/cart/remove`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartId, productId })
+        });
+      } catch (err) {
+        console.error('Помилка видалення товару:', err);
+      }
+    }
+
+    async function clearCart() {
+      if (!cartId) return;
+
+      try {
+        await fetch(`${API_BASE}/cart/clear`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartId })
+        });
         fetchCart();
-      });
+      } catch (err) {
+        console.error('Помилка очищення кошика:', err);
+      }
+    }
+
+    document.getElementById('clearCartBtn')?.addEventListener('click', () => {
+      if (confirm('Ви впевнені, що хочете очистити кошик?')) {
+        clearCart();
+      }
     });
 
-    container.querySelectorAll('.remove-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const productId = btn.dataset.id;
-
-        await removeCartItem(productId);
-        fetchCart();
-      });
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+      window.location.href = 'checkout.html';
     });
-  }
 
-  async function updateCartItemQuantity(productId, change) {
-    try {
-      await fetch(`${API_BASE}/cart/update`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cartId, productId, change })
-      });
-    } catch (err) {
-      console.error('Помилка оновлення кількості:', err);
-    }
-  }
-
-  async function removeCartItem(productId) {
-    try {
-      await fetch(`${API_BASE}/cart/remove`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cartId, productId })
-      });
-    } catch (err) {
-      console.error('Помилка видалення товару:', err);
-    }
-  }
-
-  async function clearCart() {
-    if (!cartId) return;
-
-    try {
-      await fetch(`${API_BASE}/cart/clear`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cartId })
-      });
-      fetchCart();
-    } catch (err) {
-      console.error('Помилка очищення кошика:', err);
-    }
-  }
-
-document.getElementById('clearCartBtn')?.addEventListener('click', () => {
-    if (confirm('Ви впевнені, що хочете очистити кошик?')) {
-      clearCart();
-    }
-});
-
-document.getElementById('checkoutBtn')?.addEventListener('click', () => {
-    alert('Оформлення замовлення поки що не реалізовано.');
-});
-
-  fetchCart();
-</script>
+    fetchCart();
+  </script>
 </body>
+
 </html>
