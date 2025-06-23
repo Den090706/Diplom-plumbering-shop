@@ -63,7 +63,7 @@ app.use('/uploads/', express.static(path.join(__dirname, '../uploads/')));
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 
-/* // MySQL Connection 
+// MySQL Connection 
  const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -71,15 +71,15 @@ app.use(express.urlencoded({ extended: true }));
   database: process.env.DB_NAME,
   port: process.env.DB_PORT || 3306,
 });
-*/
 
-const db = mysql.createConnection({
+
+/*const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '5555',
   database: 'plumber_shop'
 });
-
+*/
 
 db.connect(err => {
   if (err) {
