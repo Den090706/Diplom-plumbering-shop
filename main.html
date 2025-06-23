@@ -295,7 +295,7 @@
 
     async function loadCategories() {
       try {
-        const res = await fetch(`${API_BASE}/categories`);
+        const res = await fetch(`${API_BASE}/api/categories`);
         const data = await res.json();
 
         if (!Array.isArray(data)) {
