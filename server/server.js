@@ -65,7 +65,7 @@ app.post('/api/admin_password', (req, res) => {
     res.status(401).json({ success: false, message: 'Неправильний логін або пароль' });
   }
 });
-
+__dirname
 // MySQL Connection 
  const db = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -221,7 +221,7 @@ app.delete('/api/images/cleanup', (req, res) => {
 
 // Маршрут, який віддає головний HTML
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'main.html'));
+  res.sendFile(path.join(__dirname, '../public', 'main.html'));
 });
 
 // Отримання категорій
