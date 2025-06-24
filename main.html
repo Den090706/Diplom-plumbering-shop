@@ -288,6 +288,8 @@
         <p><strong>Ціна:</strong> ${product.price} грн</p>
         <p><strong>Кількість:</strong> ${product.stock}</p>
         <p><strong>Категорія:</strong> ${product.category_name}: ${product.subcategory_name || '—'}</p>
+        <button class="add-to-cart btn btn-success btn-sm" data-id="${product.product_id}" data-name="${product.name}" data-price="${product.price}">
+        <span class="glyphicon glyphicon-shopping-cart"></span> Додати до кошика
       `;
           container.appendChild(card);
         });
@@ -335,8 +337,6 @@
           const btn = document.createElement('button');
           btn.textContent = category.name;
           btn.addEventListener('click', () => showSubcategories(category, btn));
-          document.querySelectorAll('#category-list button').forEach(btn => btn.classList.remove('active'));
-          btn.classList.add('active');
           categoryList.appendChild(btn);
         });
       } catch (error) {
@@ -347,11 +347,14 @@
     async function showSubcategories(category, btnElem) {
       const container = document.getElementById('subcategory-container');
 
-      container.innerHTML = '';
-
       if (btnElem.classList.contains('active')) {
         return;
       }
+
+      container.innerHTML = '';
+
+      document.querySelectorAll('#category-list button').forEach(btn => btn.classList.remove('active'));
+      btn.classList.add('active');
 
       document.querySelectorAll('#category-list button').forEach(btn => {
         btn.classList.remove('active');

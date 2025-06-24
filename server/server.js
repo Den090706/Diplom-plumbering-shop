@@ -40,6 +40,9 @@ const upload = multer({ storage });
 const app = express();
 app.use(express.json()); 
 
+// Зобраеження з теки 'diplom' 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use(favicon(path.join(__dirname, '..', 'uploads', 'favicon', 'favicon.ico')));
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -188,9 +191,6 @@ app.get('/api/logout', (req, res) => {
     res.redirect('/api/login.html');
   });
 });
-
-// Зобраеження з теки 'diplom' 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Отримуємо зображення з БД
 function cleanUnusedImages() {

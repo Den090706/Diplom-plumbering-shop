@@ -438,12 +438,12 @@
   <!-- Форма видалення категорії -->
   <div id="selectCategoryToDelete" class="form" style="display: none;">
     <h3>Оберіть категорію</h3>
-    <select id="deleteCategorySelect" required></select>
+    <select id="deleteCategorySelectCat" required></select>
     <button id="loadCategoryToDeleteBtn" type="button">Вибрати</button>
   </div>
 
   <div id="deleteCategoryConfirmForm" class="form" style="display: none;">
-    <h3>Підтвердження видалення</h3>
+    <h3>Видалити категорію</h3>
     <form id="deleteCategoryConfirmFormElement">
       <input type="hidden" id="deleteCategoryId">
       <p><strong>Назва категорії:</strong> <span id="deleteCategoryName"></span></p>
@@ -1160,9 +1160,13 @@
 
 
     // Видалення категорії
+    function DeleteCategoryForm() {
+      loadCategories('deleteCategorySelectCat');
+      document.getElementById('deleteCategorySelect').disabled = true;
+    }
     // Після натискання "Вибрати"
     document.getElementById('loadCategoryToDeleteBtn').addEventListener('click', function () {
-      const select = document.getElementById('deleteCategorySelect');
+      const select = document.getElementById('deleteCategorySelectCat');
       const id = select.value;
       const name = select.options[select.selectedIndex]?.textContent;
 
@@ -1182,7 +1186,7 @@
         .then(res => res.json())
         .then(result => {
           alert(result.message || 'Категорію видалено');
-          loadCategories('deleteCategorySelect');
+          loadCategories('deleteCategorySelectCat');
           showForm('selectCategoryToDelete');
         })
         .catch(err => alert('Не вдалося видалити категорію'));
