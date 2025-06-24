@@ -822,7 +822,8 @@
         });
       console.log('Обраний товар:', itemId);
       console.log('У select зараз є опції:', [...document.getElementById('editItemSelect').options].map(o => o.textContent));
-
+    })
+      
       // Надсилання оновлення
       document.getElementById('editItemFormElement').addEventListener('submit', function (e) {
         e.preventDefault();
@@ -870,7 +871,7 @@
             console.error('Помилка оновлення:', err);
           });
       });
-    })
+
 
     // Редагування підкатегорії
     // Підтягнути список підкатегорій у select
