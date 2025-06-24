@@ -191,7 +191,7 @@ app.get('/api/logout', (req, res) => {
 
 // Отримуємо зображення з БД
 function cleanUnusedImages(simulate = false) {
-  const uploadDir = path.join(__dirname, 'uploads/products');
+  const uploadDir = path.join(__dirname, '../uploads/products');
   const filesInFolder = fs.readdirSync(uploadDir);
 
   db.query('SELECT product_id, image FROM products WHERE image IS NOT NULL', (err, results) => {
