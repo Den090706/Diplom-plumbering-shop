@@ -654,7 +654,6 @@ app.put('/api/products/:id', upload.single('image'), (req, res) => {
     }
 
     const imageFile = req.file ? '/uploads/products/' + req.file.filename : results[0].image;
-    const { name, category_id, subcategory_id, description, price, stock } = req.body;
 
     const query = `UPDATE products 
     SET name = ?, category_id = ?, subcategory_id = ?, description = ?, price = ?, stock = ?, image = ?
