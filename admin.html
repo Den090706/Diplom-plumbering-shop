@@ -784,7 +784,7 @@
           if (!item || !item.product_id) throw new Error('Невірні дані товару');
           console.log('Завантажені товари:', item);
 
-          document.getElementById('editItemIdItem').value = item.id;
+          document.getElementById('editItemIdItem').value = item.product_id;
 
           document.getElementById('currentItemName').textContent = item.name || '';
           document.getElementById('editItemNameItem').value = item.name || '';

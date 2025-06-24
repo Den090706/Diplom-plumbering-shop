@@ -40,7 +40,7 @@ const upload = multer({ storage });
 const app = express();
 app.use(express.json()); 
 
-app.use(favicon(path.join(__dirname, 'uploads', 'favicon', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, '..', 'uploads', 'favicon', 'favicon.ico')));
 
 app.use(cors({
   origin: '*',
@@ -50,7 +50,7 @@ app.use(cors({
 
 const PORT = process.env.PORT || 3000;
 
-// Ваш маршрут для перевірки пароля
+// Маршрут для перевірки пароля
 app.post('/api/admin_password', (req, res) => {
   const { password } = req.body;
 
