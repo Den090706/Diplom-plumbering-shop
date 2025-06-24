@@ -354,11 +354,7 @@
       container.innerHTML = '';
 
       document.querySelectorAll('#category-list button').forEach(btn => btn.classList.remove('active'));
-      btn.classList.add('active');
-
-      document.querySelectorAll('#category-list button').forEach(btn => {
-        btn.classList.remove('active');
-      });
+      btnElem.classList.add('active');
 
       try {
         const res = await fetch(`${API_BASE}/api/subcategories/${category.category_id}`);

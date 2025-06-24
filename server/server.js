@@ -15,6 +15,8 @@ const favicon = require('serve-favicon');
 
 const uploadDir = path.join(__dirname, 'uploads/products');
 
+app.use(express.static(__dirname));
+
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
   console.log('Папка для завантаження створена:', uploadDir);
@@ -42,7 +44,7 @@ const app = express();
 app.use(express.json()); 
 
 // Зобраеження з теки 'diplom' 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads/', express.static(path.join(__dirname, '../uploads/')));
 
 app.use(favicon(path.join(__dirname, '..', 'uploads', 'favicon', 'favicon.ico')));
 // Middleware
@@ -66,10 +68,6 @@ app.post('/api/admin_password', (req, res) => {
     res.status(401).json({ success: false, message: 'Неправильний логін або пароль' });
   }
 });
-
-app.use('/uploads/', express.static(path.join(__dirname, '../uploads/')));
-
-
 
 // MySQL Connection 
  const db = mysql.createConnection({
