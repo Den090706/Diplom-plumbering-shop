@@ -12,7 +12,7 @@ const { error, log } = require('console');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const favicon = require('serve-favicon');
-
+const app = express();
 const uploadDir = path.join(__dirname, 'uploads/products');
 
 if (!fs.existsSync(uploadDir)) {
@@ -28,17 +28,14 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, 'uploads/products'));
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
     const baseName = path.basename(file.originalname, ext)
     .replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
     console.log('Ім\'я файлу:', baseName);
     cb(null, baseName);
   }
 });
-
 const upload = multer({ storage });
 
-const app = express();
 app.use(express.json()); 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -46,7 +43,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Зобраеження з теки 'diplom' 
 app.use('/uploads/', express.static(path.join(__dirname, '../uploads/')));
 
-app.use(favicon(path.join(__dirname, '..', 'uploads', 'favicon', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon', 'favicon.ico')));
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 
