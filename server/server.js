@@ -41,6 +41,8 @@ const app = express();
 app.use(express.json()); 
 
 app.use(favicon(path.join(__dirname, '..', 'uploads', 'favicon', 'favicon.ico')));
+// Middleware
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
   origin: '*',
@@ -63,8 +65,7 @@ app.post('/api/admin_password', (req, res) => {
 
 app.use('/uploads/', express.static(path.join(__dirname, '../uploads/')));
 
-// Middleware
-app.use(express.urlencoded({ extended: true }));
+
 
 // MySQL Connection 
  const db = mysql.createConnection({
@@ -189,10 +190,7 @@ app.get('/api/logout', (req, res) => {
 });
 
 // Зобраеження з теки 'diplom' 
-app.use(express.static(path.join(__dirname, '..')));
-
-// Отримуємо всі файли папки
-const filesInFolder = fs.readdirSync(uploadDir);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Отримуємо зображення з БД
 function cleanUnusedImages() {
