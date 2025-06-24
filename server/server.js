@@ -29,14 +29,14 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const baseName = path.basename(file.originalname, ext)
-    .replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
+      .replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
     console.log('Ім\'я файлу:', baseName);
     cb(null, baseName);
   }
 });
 const upload = multer({ storage });
 
-app.use(express.json()); 
+app.use(express.json());
 
 app.use(express.static(path.join(__dirname, '../public')));
 
@@ -67,7 +67,7 @@ app.post('/api/admin_password', (req, res) => {
 });
 __dirname
 // MySQL Connection 
- const db = mysql.createConnection({
+const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -189,25 +189,49 @@ app.get('/api/logout', (req, res) => {
 });
 
 // Отримуємо зображення з БД
-function cleanUnusedImages() {
+function cleanUnusedImages(simulate = false) {
   const uploadDir = path.join(__dirname, 'uploads/products');
   const filesInFolder = fs.readdirSync(uploadDir);
 
-  db.query('SELECT image FROM products WHERE image IS NOT NULL', (err, results) => {
+  db.query('SELECT product_id, image FROM products WHERE image IS NOT NULL', (err, results) => {
     if (err) throw err;
 
     const usedImages = results.map(row => path.basename(row.image));
     const unusedImages = filesInFolder.filter(file => !usedImages.includes(file));
 
+    // 1. Видаляємо невикористані файли
     unusedImages.forEach(file => {
       const filePath = path.join(uploadDir, file);
       if (simulate) {
-        console.log('[SIMULATION] Буде видалено:', file);
+        console.log('[SIMULATION] Буде видалено файл:', file);
       } else {
-        fs.unlinkSync(filePath, err => {
-          if (err) console.warn('Не вдалося видалити файл: ', filePath);
-          console.log('Видалено:', file);
-        });
+        try {
+          fs.unlinkSync(filePath);
+          console.log('Файл видалено:', file);
+        } catch (err) {
+          console.warn('Не вдалося видалити файл:', filePath);
+        }
+      }
+    });
+
+    // 2. Перевіряємо чи існує файл, що вказаний у БД
+    results.forEach(({ product_id, image }) => {
+      const imageName = path.basename(image);
+      const imagePath = path.join(uploadDir, imageName);
+
+      if (!fs.existsSync(imagePath)) {
+        // Якщо файл з БД не існує фізично — очищаємо поле
+        if (simulate) {
+          console.log(`[SIMULATION] Очистити поле image для товару ID ${product_id}`);
+        } else {
+          db.query('UPDATE products SET image = NULL WHERE product_id = ?', [product_id], (err) => {
+            if (err) {
+              console.warn(`Помилка очищення image для ID ${product_id}:`, err.message);
+            } else {
+              console.log(`Очищено поле image у товару ID ${product_id}`);
+            }
+          });
+        }
       }
     });
   });
