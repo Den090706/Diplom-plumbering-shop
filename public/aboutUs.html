@@ -1,37 +1,39 @@
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-<title>Про сайт</title>
-<style> 
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #f0f4f8;
-  font-family: Arial, sans-serif;
-}
-.name-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 14px 20px;
-  background: linear-gradient(90deg, #4d9fef, #87cefa);
-  box-sizing: border-box;
-  border-bottom: 2px solid #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <title>Про сайт</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f4f8;
+      font-family: Arial, sans-serif;
+    }
 
-.shop-name {
-  font-size: 20px;
-  color: rgb(255, 255, 255);
-  font-weight: bold;
-  user-select: none;
-}
+    .name-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 14px 20px;
+      background: linear-gradient(90deg, #4d9fef, #87cefa);
+      box-sizing: border-box;
+      border-bottom: 2px solid #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-.auth-buttons {
+    .shop-name {
+      font-size: 20px;
+      color: rgb(255, 255, 255);
+      font-weight: bold;
+      user-select: none;
+    }
+
+    .auth-buttons {
       display: flex;
       gap: 10px;
     }
@@ -51,106 +53,110 @@ body {
       box-shadow: 0 4px 10px rgba(35, 165, 182, 0.6);
     }
 
-.topnav {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  width: 100%;
-  padding: 14px 20px;
-  background: linear-gradient(90deg, #5a64f5, #3a44e1);
-  border: none;
-  font-weight: bold;
-  transition: background-color 0.3s;
-  box-shadow: inset 0 -3px 5px rgba(0,0,0,0.1);
-}
+    .topnav {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      width: 100%;
+      padding: 14px 20px;
+      background-color: #ffffff;
+      padding: 1rem;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
 
-.topnav a {
-  color: white;
-  text-decoration: none;
-  display: inline-block;
-  padding: 14px 20px;
-  font-weight: bold;
-  transition: background-color 0.3s, color 0.3s;
-  border-radius: 4px;
-  margin-left: 0px;
-}
+    .topnav a {
+      color: #333;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
 
-.topnav a:hover {
-  background-color: #2ac1d5;
-  color: black;
-  box-shadow: 0 2px 8px rgba(42, 193, 213, 0.7);
-}
+    .topnav a:hover {
+      background-color: #4d9fef;
+      color: white;
+    }
 
-.name-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 14px 20px;
-  background-color: #37ddf3;
-  box-sizing: border-box;
-  border-bottom: 2px solid #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+    .name-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 14px 20px;
+      background-color: #37ddf3;
+      box-sizing: border-box;
+      border-bottom: 2px solid #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-#aboutUs{
-  padding-left: 50px;
-}
-</style>
+    #aboutUs {
+      padding-left: 50px;
+    }
+  </style>
 </head>
+
 <body>
-<div class="name-bar">
-  <div class="shop-name">Магазин сантехніки</div>
-  <div class="auth-buttons" id="authButtons">
-    <a href="login.html" id="loginBtn">Увійти</a>
-    <a href="/logout" id="logoutBtn" style="display:none;">Вийти</a>
-  </div> 
-</div>
-<!-- Навігаційна панель -->
-<nav class="topnav">
-  <a href="main.html">Головна</a>
-  <a href="aboutUs.html">Про нас</a>
-  <a href="admin.html">Адміністратор</a>
-</nav>
-<body>
-<div id="aboutUs" class="aboutUs">
-  <h1>Про інтернет-магазин сантехніки</h1>
-  <p>
-    Вітаємо на демонстраційному сайті інтернет-магазину сантехніки! Цей ресурс створено в рамках дипломного проєкту на тему:
-    <strong>«Розробка інтернет-магазин сантехніки»</strong>.
-  </p>
+  <div class="name-bar">
+    <div class="shop-name">Магазин сантехніки</div>
+    <div class="auth-buttons" id="authButtons">
+      <a href="login.html" id="loginBtn">Увійти</a>
+      <a href="/logout" id="logoutBtn" style="display:none;">Вийти</a>
+    </div>
+  </div>
+  <!-- Навігаційна панель -->
+  <nav class="topnav">
+    <a href="main.html">Головна</a>
+    <a href="aboutUs.html">Про нас</a>
+    <a href="admin.html">Адміністратор</a>
+  </nav>
 
-  <p>
-    Основна мета проєкту — розробити функціональний веб-додаток, який демонструє основні можливості сучасного інтернет-магазину: 
-    каталогізацію товарів, роботу з базою даних, систему реєстрації та авторизації користувачів, а також рольову модель з розмежуванням доступу для адміністратора.
-  </p>
+  <body>
+    <div id="aboutUs" class="aboutUs">
+      <h1>Про інтернет-магазин сантехніки</h1>
+      <p>
+        Вітаємо на демонстраційному сайті інтернет-магазину сантехніки! Цей ресурс створено в рамках дипломного проєкту
+        на тему:
+        <strong>«Розробка інтернет-магазин сантехніки»</strong>.
+      </p>
 
-  <p>
-    Вебсайт реалізовано з використанням таких технологій як:
-    <ul>
-      <li><strong>Node.js</strong> — серверна логіка та маршрутизація;</li>
-      <li><strong>MySQL</strong> — зберігання та обробка даних про товари та користувачів;</li>
-      <li><strong>HTML/CSS</strong> — структура та стиль інтерфейсу користувача.</li>
-    </ul>
-  </p>
+      <p>
+        Основна мета проєкту — розробити функціональний веб-додаток, який демонструє основні можливості сучасного
+        інтернет-магазину:
+        каталогізацію товарів, роботу з базою даних, систему реєстрації та авторизації користувачів, а також рольову
+        модель з розмежуванням доступу для адміністратора.
+      </p>
 
-  <p>
-    Сайт не є комерційним проєктом і використовується виключно з навчальною метою. Усі представлені товари, зображення та ціни — вигадані і слугують лише для демонстрації функціоналу.
-  </p>
+      <p>
+        Вебсайт реалізовано з використанням таких технологій як:
+      <ul>
+        <li><strong>Node.js</strong> — серверна логіка та маршрутизація;</li>
+        <li><strong>MySQL</strong> — зберігання та обробка даних про товари та користувачів;</li>
+        <li><strong>HTML/CSS</strong> — структура та стиль інтерфейсу користувача.</li>
+      </ul>
+      </p>
 
-  <p>
-    Дякуємо за перегляд! Якщо ви адміністратор, увійдіть через відповідний розділ для керування товарами.
-  </p>
-</div>
-<script>
-const sidebarButtons = document.querySelectorAll(".sidebar-btn");
-    
-    sidebarButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        const targetPage = button.getAttribute("data-target");
-        window.location.href = targetPage;
+      <p>
+        Сайт не є комерційним проєктом і використовується виключно з навчальною метою. Усі представлені товари,
+        зображення та ціни — вигадані і слугують лише для демонстрації функціоналу.
+      </p>
+
+      <p>
+        Дякуємо за перегляд! Якщо ви адміністратор, увійдіть через відповідний розділ для керування товарами.
+      </p>
+    </div>
+    <script>
+      const sidebarButtons = document.querySelectorAll(".sidebar-btn");
+
+      sidebarButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          const targetPage = button.getAttribute("data-target");
+          window.location.href = targetPage;
+        });
       });
-    });
-</script>
-</body>
+    </script>
+  </body>
+
 </html>
