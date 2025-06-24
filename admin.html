@@ -40,7 +40,7 @@
     .auth-buttons a {
       text-decoration: none;
       padding: 10px 15px;
-      background-color: #82a7b1;
+      background-color: #a4ebff;
       color: black;
       border-radius: 5px;
       transition: background-color 0.3s, box-shadow 0.3s;
@@ -48,8 +48,8 @@
     }
 
     .auth-buttons a:hover {
-      background-color: #2ac1d5;
-      box-shadow: 0 4px 10px rgba(42, 193, 213, 0.6);
+      background-color: #0e9fb3;
+      box-shadow: 0 4px 10px rgba(35, 165, 182, 0.6);
     }
 
     .topnav {
@@ -131,7 +131,8 @@
     }
 
     .add-options {
-      margin-top: 20px;
+      margin-right: 170px;
+      padding-right: 20px;
     }
 
     #addOptions button {
@@ -173,7 +174,7 @@
       padding: 10px;
       margin-left: 170px;
       background-color: #f55c5c;
-      color: white;
+      color: rgb(0, 0, 0);
       border: none;
       cursor: pointer;
       transition: background-color 0.3s;
@@ -780,10 +781,9 @@
           console.log('Отриманий товар з API:', item);
 
           if (Array.isArray(item)) item = item[0];
-          if (!item || !item.id) throw new Error('Невірні дані товару');
+          if (!item || !item.product_id) throw new Error('Невірні дані товару');
           console.log('Завантажені товари:', item);
 
-          // Заповнення полів
           document.getElementById('editItemIdItem').value = item.id;
 
           document.getElementById('currentItemName').textContent = item.name || '';
@@ -808,14 +808,11 @@
           console.log('item:', item);
 
           return Promise.all([
-            // Завантаження категорій
             loadCategories('editCategoryItem', item.category_id),
-            // Завантаження підкатегорій
             loadSubcategories('editCategoryItem', 'editSubcategoryItem')
           ]);
         })
         .then(() => {
-          // Показати форму після завантаження всіх даних
           document.getElementById('editItemForm').style.display = 'block';
         })
         .catch(err => {

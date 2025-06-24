@@ -14,6 +14,8 @@ const session = require('express-session');
 
 const uploadDir = path.join(__dirname, 'uploads/products');
 
+app.use(favicon(path.join(__dirname, 'uploads', 'favicon', 'favicon.ico')));
+
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
   console.log('Папка для завантаження створена:', uploadDir);
@@ -37,7 +39,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const app = express();
-app.use(express.json()); // для JSON-запитів
+app.use(express.json()); 
 
 app.use(cors({
   origin: '*',
