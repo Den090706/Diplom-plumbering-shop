@@ -15,8 +15,6 @@ const favicon = require('serve-favicon');
 
 const uploadDir = path.join(__dirname, 'uploads/products');
 
-app.use(express.static(__dirname));
-
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
   console.log('Папка для завантаження створена:', uploadDir);
@@ -42,6 +40,8 @@ const upload = multer({ storage });
 
 const app = express();
 app.use(express.json()); 
+
+app.use(express.static(__dirname));
 
 // Зобраеження з теки 'diplom' 
 app.use('/uploads/', express.static(path.join(__dirname, '../uploads/')));
