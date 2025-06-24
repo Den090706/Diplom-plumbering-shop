@@ -221,7 +221,7 @@ app.delete('/api/images/cleanup', (req, res) => {
 
 // Маршрут, який віддає головний HTML
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'main.html'));
+  res.sendFile(path.join(__dirname, 'public', 'main.html'));
 });
 
 // Отримання категорій
