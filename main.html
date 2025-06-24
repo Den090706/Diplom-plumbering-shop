@@ -7,6 +7,27 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
   <title>Plumbering shop</title>
   <style>
+    @media (max-width: 768px) {
+      .main-content {
+        flex-direction: column;
+      }
+
+      .category-sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        top: auto;
+        left: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      #subcategory-container {
+        margin-left: 0 !important;
+      }
+    }
+
     .layout {
       display: flex;
       flex-direction: column;
@@ -204,7 +225,6 @@
 
       <!-- Контейнер товарів -->
       <div id="product-container" style="display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem;"></div>
-
     </div>
   </div>
   <script>
@@ -241,6 +261,9 @@
     });
 
     async function loadProducts() {
+      const imagePath = product.image?.replace(/^\/+/, '');
+      const imageUrl = `${API_BASE}/${imagePath}`;
+
       try {
         const response = await fetch(`${API_BASE}/products`);
         const products = await response.json();
@@ -257,7 +280,7 @@
           const card = document.createElement('div');
           card.className = 'product-card';
           card.innerHTML = `
-        <img src="${API_BASE}/${product.image}" alt="${product.name}" style="max-width: 100%;">
+        <img src="${imageUrl} alt="${product.name}" style="max-width: 100%;">
         <h3>${product.name}</h3>
         <p>${product.description}</p>
         <p><strong>Ціна:</strong> ${product.price} грн</p>
@@ -319,8 +342,19 @@
       }
     }
 
-    async function showSubcategories(category) {
+    async function showSubcategories(category, btnElem) {
       const container = document.getElementById('subcategory-container');
+
+      if(btnElem.classList.contain('active')){
+        return;
+      }
+
+      document.querySelectorAll('#category-list button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      btnElem.classList.add('active');
+
       container.innerHTML = '';
 
       try {
