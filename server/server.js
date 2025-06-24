@@ -23,11 +23,12 @@ if (!fs.existsSync(uploadDir)) {
 // Сховище для зображень
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.join(__dirname, 'uploads/products');
+    const uploadPath = path.join(__dirname, '../uploads/products');
     console.log('Завантаження у папку:', uploadPath);
-    cb(null, path.join(__dirname, 'uploads/products'));
+    cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
     const baseName = path.basename(file.originalname, ext)
       .replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
     console.log('Ім\'я файлу:', baseName);
