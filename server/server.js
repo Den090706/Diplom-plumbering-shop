@@ -28,10 +28,11 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, 'uploads/products'));
   },
   filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname);
-    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9) + ext;
-    console.log('Ім\'я файлу:', uniqueName);
-    cb(null, uniqueName);
+    cb(null, file.originalname);
+    const baseName = path.basename(file.originalname, ext)
+    .replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
+    console.log('Ім\'я файлу:', baseName);
+    cb(null, baseName);
   }
 });
 
