@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="icon" href="/uploads/favicon/favicon.ico" type="image/x-icon">
   <title>Plumbering shop</title>
   <style>
     @media (max-width: 768px) {
@@ -261,8 +262,6 @@
     });
 
     async function loadProducts() {
-      const imagePath = product.image?.replace(/^\/+/, '');
-      const imageUrl = `${API_BASE}/${imagePath}`;
 
       try {
         const response = await fetch(`${API_BASE}/products`);
@@ -277,10 +276,13 @@
         }
 
         products.forEach(product => {
+          const imagePath = product.image?.replace(/^\/+/, '');
+          const imageUrl = `${API_BASE}/${imagePath}`;
+          
           const card = document.createElement('div');
           card.className = 'product-card';
           card.innerHTML = `
-        <img src="${imageUrl} alt="${product.name}" style="max-width: 100%;">
+        <img src="${imageUrl}" alt="${product.name}" style="max-width: 100%;">
         <h3>${product.name}</h3>
         <p>${product.description}</p>
         <p><strong>Ціна:</strong> ${product.price} грн</p>
@@ -345,7 +347,7 @@
     async function showSubcategories(category, btnElem) {
       const container = document.getElementById('subcategory-container');
 
-      if(btnElem.classList.contain('active')){
+      if (btnElem.classList.contain('active')) {
         return;
       }
 
