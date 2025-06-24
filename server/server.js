@@ -43,7 +43,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Зобраеження з теки 'diplom' 
 app.use('/uploads/', express.static(path.join(__dirname, '../uploads/')));
 
-app.use(favicon(path.join(__dirname, 'public', 'favicon', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, '../public', 'favicon', 'favicon.ico')));
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 
