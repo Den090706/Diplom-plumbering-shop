@@ -38,7 +38,7 @@ const upload = multer({ storage });
 
 app.use(express.json()); 
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Зобраеження з теки 'diplom' 
 app.use('/uploads/', express.static(path.join(__dirname, '../uploads/')));
