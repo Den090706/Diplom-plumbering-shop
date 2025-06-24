@@ -11,6 +11,7 @@ const fs = require('fs');
 const { error, log } = require('console');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
+const favicon = require('serve-favicon');
 
 const uploadDir = path.join(__dirname, 'uploads/products');
 
