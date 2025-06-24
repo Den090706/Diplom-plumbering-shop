@@ -195,6 +195,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="name-bar">
     <div class="shop-name">Plumbering shop</div>
@@ -277,7 +278,7 @@
         products.forEach(product => {
           const imagePath = product.image?.replace(/^\/+/, '');
           const imageUrl = `${API_BASE}/${imagePath}`;
-          
+
           const card = document.createElement('div');
           card.className = 'product-card';
           card.innerHTML = `
@@ -346,6 +347,8 @@
     async function showSubcategories(category, btnElem) {
       const container = document.getElementById('subcategory-container');
 
+      container.innerHTML = '';
+
       if (btnElem.classList.contains('active')) {
         return;
       }
@@ -353,10 +356,7 @@
       document.querySelectorAll('#category-list button').forEach(btn => {
         btn.classList.remove('active');
       });
-
       btnElem.classList.add('active');
-
-      container.innerHTML = '';
 
       try {
         const res = await fetch(`${API_BASE}/api/subcategories/${category.category_id}`);
