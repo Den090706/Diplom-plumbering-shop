@@ -195,7 +195,6 @@
     }
   </style>
 </head>
-
 <body>
   <div class="name-bar">
     <div class="shop-name">Plumbering shop</div>
@@ -237,7 +236,7 @@
       await loadProducts();
       await loadCategories();
       await checkLoginStatus();
-      loadProductsBySubcategory();
+
       const userId = localStorage.getItem('userId');
       const userName = localStorage.getItem('userName');
       const logoutBtn = document.getElementById('logoutBtn');
@@ -334,7 +333,7 @@
         data.forEach(category => {
           const btn = document.createElement('button');
           btn.textContent = category.name;
-          btn.addEventListener('click', () => showSubcategories(category));
+          btn.addEventListener('click', () => showSubcategories(category, btn));
           document.querySelectorAll('#category-list button').forEach(btn => btn.classList.remove('active'));
           btn.classList.add('active');
           categoryList.appendChild(btn);
@@ -347,7 +346,7 @@
     async function showSubcategories(category, btnElem) {
       const container = document.getElementById('subcategory-container');
 
-      if (btnElem.classList.contain('active')) {
+      if (btnElem.classList.contains('active')) {
         return;
       }
 
