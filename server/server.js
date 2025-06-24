@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
     const baseName = path.basename(file.originalname, ext)
       .replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
     console.log('Ім\'я файлу:', baseName);
-    cb(null, baseName);
+    cb(null, baseName + ext);
   }
 });
 const upload = multer({ storage });
