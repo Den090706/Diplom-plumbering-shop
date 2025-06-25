@@ -1148,7 +1148,7 @@
     // Видалення категорії
     function DeleteCategoryForm() {
       loadCategories('deleteCategorySelectCat');
-      document.getElementById('deleteCategorySelectCat').disabled = true;
+      //document.getElementById('deleteCategorySelectCat').disabled = true;
     }
     // Після натискання "Вибрати"
     document.getElementById('loadCategoryToDeleteBtn').addEventListener('click', function () {
@@ -1172,7 +1172,6 @@
         .then(res => res.json())
         .then(result => {
           alert(result.message || 'Категорію видалено');
-          loadCategories('deleteCategorySelectCat');
           showForm('selectCategoryToDelete');
         })
         .catch(err => alert('Не вдалося видалити категорію'));
