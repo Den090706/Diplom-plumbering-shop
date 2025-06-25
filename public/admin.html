@@ -223,7 +223,7 @@
     <!-- ДОДАВАННЯ -->
     <!-- Вибір дії для Додати-->
     <div class="add-options" id="addOptions" style="display: none;">
-      <button onclick="showForm('productForm')">Товар</button>
+      <button onclick="showForm('productForm'); initAddProductForm()">Товар</button>
       <button onclick="showForm('subcategoryForm')">Підкатегорію</button>
       <button onclick="showForm('categoryForm')">Категорію</button>
     </div>
@@ -489,7 +489,6 @@
       loadCategories('deleteCategorySelect');
     });
 
-
     // Приховує всі форми з класом .form і показує лише одну
     function showForm(formId) {
       document.querySelectorAll('.form').forEach(form => {
@@ -613,8 +612,10 @@
       }
     }
 
-
-
+    function initAddProductForm() {
+      loadCategories('category');
+      loadSubcategories('category', 'subcategory');
+    }
     // Додавання товару
     document.getElementById('addProductForm').addEventListener('submit', function (e) {
       e.preventDefault();
