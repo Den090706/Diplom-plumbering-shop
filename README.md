@@ -57,4 +57,4 @@
 ---
 
 ## Опублікований продукт
-Готовий вебхастосунок буде захощений на хостингу [Render]([https://diplom-plumbering-shop.onrender.com]).
+Готовий вебхастосунок буде захощений на хостингу [Render](https://diplom-plumbering-shop.onrender.com).
