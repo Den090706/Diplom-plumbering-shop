@@ -371,7 +371,7 @@
   <div class="edit-options" id="deleteOptions" style="display: none;">
     <button onclick="showForm('selectItemToDelete')">Товар</button>
     <button onclick="showForm('selectSubcategoryToDelete'); initDeleteSubcategoryForm();">Підкатегорію</button>
-    <button onclick="showForm('selectCategoryToDelete')">Категорію</button>
+    <button onclick="showForm('selectCategoryToDelete'); DeleteCategoryForm()">Категорію</button>
   </div>
 
   <!-- Вибір об'єкту -->
@@ -1148,7 +1148,6 @@
     // Видалення категорії
     function DeleteCategoryForm() {
       loadCategories('deleteCategorySelectCat');
-      //document.getElementById('deleteCategorySelectCat').disabled = true;
     }
     // Після натискання "Вибрати"
     document.getElementById('loadCategoryToDeleteBtn').addEventListener('click', function () {
