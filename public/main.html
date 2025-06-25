@@ -366,6 +366,9 @@
         }
 
         products.forEach(product => {
+          const imagePath = product.image?.replace(/^\/+/, '');
+          const imageUrl = `${API_BASE}/${imagePath}`;
+
           const card = document.createElement('div');
           card.className = 'product-card';
           card.innerHTML = `
